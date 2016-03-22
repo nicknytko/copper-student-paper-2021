@@ -1,0 +1,87 @@
+\documentclass[review]{siamart}
+
+% 1. Preamble and packages
+\usepackage{lipsum}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{algorithmic}
+\ifpdf%
+  \DeclareGraphicsExtensions{.eps,.pdf,.png,.jpg}
+\else
+  \DeclareGraphicsExtensions{.eps}
+\fi
+\usepackage{amsopn}
+\DeclareMathOperator{\diag}{diag}
+
+% 2. Paper title
+\newcommand{\TheTitle}{%
+  Example Title
+}
+
+% 3. Student Name
+\newcommand{\TheName}{%
+  X. Y. Student
+}
+
+% 4. Student Address
+\newcommand{\TheAddress}{%
+  University of ABC,
+  (\email{xys@abc.edu}, \url{http://www.abc.edu/\string~xys/}).
+}
+
+% 5. Acknowledge funding or other resources
+\newcommand{\TheFunding}{%
+  This work was funded by IJK\@.
+}
+
+% 6. Collaborators, such as advisor or research collaborators
+\newcommand{\TheCollaborators}{%
+  A. B. Advisor,
+  C. D. Researcher,
+}
+
+% ---------------------------------------------
+% ---------------------------------------------
+\author{\TheName\thanks{\TheAddress}}
+\title{{\TheTitle}\thanks{\TheFunding}}
+\headers{\TheTitle}{\TheName}
+\ifpdf%
+\hypersetup{%
+  pdftitle={\TheTitle},
+  pdfauthor={\TheName}
+}
+\fi
+
+\begin{document}
+
+\maketitle
+
+\begin{center}
+In collaboration with:
+  {\TheCollaborators}
+\end{center}
+\vspace{1cm}
+% ---------------------------------------------
+% ---------------------------------------------
+
+\begin{abstract}
+  \lipsum[1]
+\end{abstract}
+
+\begin{keywords}
+  % 7. Keywords that describe the paper
+\end{keywords}
+
+\section{Introduction}\label{sec:intro}
+
+\section{Main Contribution}\label{sec:main}
+
+\section{Numerical Results}\label{sec:num}
+
+\section{Conclusions}\label{sec:conc}
+
+\bibliographystyle{siamplain}
+\bibliography{references}
+
+\end{document}
