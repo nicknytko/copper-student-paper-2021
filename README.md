@@ -16,7 +16,7 @@ wget https://www.siam.org/journals/tex/siamart.cls
 
 Next, be sure to follow the specific steps below, including the writing guidelines.  The numbering can be found in the comments of `paper-template.tex`.
 
-# Specific Lines to change in the template
+# Specific Lines to Change in the TeX File
 
 1. Preamble and packages
 
