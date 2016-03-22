@@ -14,7 +14,7 @@ To obtain SIAM article class, download `siamart.cls` at the link ([https://www.s
 wget https://www.siam.org/journals/tex/siamart.cls
 ```
 
-Next, be sure to follow the specific steps below, including the writing guidelines.
+Next, be sure to follow the specific steps below, including the writing guidelines.  The numbering can be found in the comments of `paper-template.tex`.
 
 # Specific Lines to change in the template
 
