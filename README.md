@@ -1,10 +1,15 @@
 Guidelines and template for the student paper competition for the Copper Mountain Conference on Multigrid Methods.
 
 # How to Use this Template
----
+
+The file `paper-template.tex` should be used as a template for a student paper submission.  The first step is to rename this file to
+```bash
+cp paper-template.tex LASTNAME_FIRSTNAME_paper.tex
+```
+
+The template is based on the latest SIAM article class, which is detailed here: 
 
 # Specific Lines to change in the template
----
 
 1. Preamble and packages
 
@@ -21,4 +26,3 @@ Guidelines and template for the student paper competition for the Copper Mountai
 7. Keywords that describe the paper
 
 # Guidelines for Writing
----
