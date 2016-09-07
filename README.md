@@ -9,9 +9,9 @@ cp paper-template.tex LASTNAME_FIRSTNAME_paper.tex
 
 The template is based on the latest SIAM article class, which is detailed here: [https://www.siam.org/journals/auth-info.php](https://www.siam.org/journals/auth-info.php).  The paper should conform to the SIAM documentclass as outlined here: [https://www.siam.org/journals/tex/docsiamart.pdf](https://www.siam.org/journals/tex/docsiamart.pdf).
 
-To obtain SIAM article class, download `siamart.cls` at the link ([https://www.siam.org/journals/tex/siamart.cls](https://www.siam.org/journals/tex/siamart.cls)) or by
+To obtain SIAM article class, download `siamart0516.cls` at the link ([https://www.siam.org/journals/tex/online/siamonline0516.cls](https://www.siam.org/journals/tex/online/siamonline0516.cls)) or by
 ```bash
-wget https://www.siam.org/journals/tex/siamart.cls
+wget https://www.siam.org/journals/tex/online/siamonline0516.cls
 ```
 
 Next, be sure to follow the specific steps below, including the writing guidelines.  The numbering can be found in the comments of `paper-template.tex`.
