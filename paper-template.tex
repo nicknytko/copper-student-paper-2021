@@ -20,6 +20,11 @@
   Example Title
 }
 
+% 2.5. Short title for running heads (if needed)
+\newcommand{\TheShortTitle}{%
+  \TheTitle
+}
+
 % 3. Student Name
 \newcommand{\TheName}{%
   X. Y. Student
@@ -46,7 +51,7 @@
 % ---------------------------------------------
 \author{\TheName\thanks{\TheAddress}}
 \title{{\TheTitle}\thanks{\TheFunding}}
-\headers{\TheTitle}{\TheName}
+\headers{\TheShortTitle}{\TheName}
 \ifpdf%
 \hypersetup{%
   pdftitle={\TheTitle},
