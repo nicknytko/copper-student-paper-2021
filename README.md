@@ -9,14 +9,14 @@ cp paper-template.tex LASTNAME_FIRSTNAME_paper.tex
 
 The template is based on the latest SIAM article class, which is detailed here: [https://www.siam.org/journals/auth-info.php](https://www.siam.org/journals/auth-info.php).  The paper should conform to the SIAM documentclass as outlined here: [https://www.siam.org/journals/tex/docsiamart.pdf](https://www.siam.org/journals/tex/docsiamart.pdf).
 
-To obtain SIAM article class, download `siamart1116.cls` at the link [https://www.siam.org/journals/tex/online/siamonline1116.cls](https://www.siam.org/journals/tex/online/siamonline1116.cls) or by
+To obtain SIAM article class, download `siamart1116.cls` at the link [https://www.siam.org/journals/tex/standard/siamart1116.cls](https://www.siam.org/journals/tex/standard/siamart1116.cls) or by
 ```bash
-wget https://www.siam.org/journals/tex/online/siamonline1116.cls
+wget https://www.siam.org/journals/tex/standard/siamart1116.cls
 ```
 
-In addition, obtain the SIAM bibliographic style file `siamplain.bst` at the link [https://www.siam.org/journals/tex/online/siamplain.bst](https://www.siam.org/journals/tex/online/siamplain.bst) or by
+In addition, obtain the SIAM bibliographic style file `siamplain.bst` at the link [https://www.siam.org/journals/tex/standard/siamplain.bst](https://www.siam.org/journals/tex/standard/siamplain.bst) or by
 ```bash
-wget https://www.siam.org/journals/tex/online/siamplain.bst
+wget https://www.siam.org/journals/tex/standard/siamplain.bst
 ```
 
 Next, be sure to follow the specific steps below, including the writing guidelines.  The numbering can be found in the comments of `paper-template.tex`.
