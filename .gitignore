@@ -9,4 +9,5 @@
 *.pdf
 *.synctex.gz
 *.thm
-siamart.cls
+*.cls
+.DS_store

@@ -1,4 +1,4 @@
-\documentclass[review]{siamart171218}
+\documentclass[review]{siamart190516}
 
 % 1. Preamble and packages
 \usepackage{lipsum}
@@ -17,7 +17,7 @@
 
 % 2. Paper title
 \newcommand{\TheTitle}{%
-  Example Title
+  Supervised Machine Learning to Predict Multigrid Convergence
 }
 
 % 2.5. Short title for running heads (if needed)
@@ -26,14 +26,12 @@
 }
 
 % 3. Student Name
-\newcommand{\TheName}{%
-  X. Y. Student
-}
+\newcommand{\TheName}{Nicolas Nytko}
 
 % 4. Student Address
 \newcommand{\TheAddress}{%
-  University of ABC,
-  (\email{xys@abc.edu}, \url{http://www.abc.edu/\string~xys/}).
+  University of Illinois at Urbana-Champaign,
+  (\email{nnytko2@illinois.edu}).
 }
 
 % 5. Acknowledge funding or other resources
@@ -43,14 +41,15 @@
 
 % 6. Collaborators, such as advisor or research collaborators
 \newcommand{\TheCollaborators}{%
-  A. B. Advisor,
-  C. D. Researcher,
+  Matthew West,
+  Luke Olson,
+  Scott MacLachlan
 }
 
 % ---------------------------------------------
 % ---------------------------------------------
 \author{\TheName\thanks{\TheAddress}}
-\title{{\TheTitle}\thanks{\TheFunding}}
+\title{{\TheTitle}}
 \headers{\TheShortTitle}{\TheName}
 \ifpdf%
 \hypersetup{%
@@ -72,11 +71,11 @@ In collaboration with:
 % ---------------------------------------------
 
 \begin{abstract}
-  \lipsum[1]
+  \input{../abstract/abstract.txt}
 \end{abstract}
 
 \begin{keywords}
-  % 7. Keywords that describe the paper
+  multigrid, convergence, predict, machine learning, supervised learning, graphnet, cnn
 \end{keywords}
 
 \section{Introduction}\label{sec:intro}
