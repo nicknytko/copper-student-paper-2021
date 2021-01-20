@@ -9,5 +9,4 @@
 *.pdf
 *.synctex.gz
 *.thm
-*.cls
 .DS_store
