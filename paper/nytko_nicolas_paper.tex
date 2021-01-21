@@ -114,13 +114,15 @@ In collaboration with:
 
 \section{Introduction}\label{sec:intro}
 
-Multigrid methods are some of the most widely used linear solvers for sparse systems -- particularly ones that arise from the discretization of partial differential equations.  Standard geometric multigrid can be very effective when optimal coarsening is chosen, but is much less so when anisotropy is present, and becomes extremely difficult to use effectively on unstructured meshes, for example those generated from finite element discretizations.  Algebraic Multigrid attempts to solve this by exploiting the structure of the system itself to create an interpolation operator.  This ``optimal'' operator is often generated using heuristics that must be tuned and tweaked for a specific problem.  An example of which is Ruge-St\"{u}ben coarsening, which generates a prolongation and interpolation operator using strength of connection, treating the original sparse system as a graph.  Intuitively, there must be some sense of a cutoff as to how strong the connection must be before a point is considered coarse or fine.  This is one example of a parameter that must be tuned when using multigrid, algebraic or not.  The effectiveness of the parameter set is hard to understand, and most often consists of actually running the multigrid iterations.
+Multigrid methods are some of the most widely used linear solvers for sparse systems, particularly ones that arise from the discretization of partial differential equations.  By ``downsampling'' the original problem to a series of smaller and smaller problems, fast convergence can be obtained with minimal work.  The question becomes, what is the optimal way to downsample each problem and obtain a splitting of coarse/fine points?  Classical Algebraic Multigrid (AMG) techniques attempt to answer this by exploiting the structure of the original system to create a set of interpolation operators.  However, these methods often require careful parameter tweaking to obtain sensible splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
 
-In this paper, a framework for predicting the resulting convergence rates is introduced.  This framework takes as input a C/F splitting of the mesh, the output of AMG, and outputs a rate of convergence between $0$ and $1$, inclusive.  A lower value indicates a ``faster'' rate of convergence -- more of the error is dissipated at each iteration.  Depending on the problem, either a convolutional neural network or a graph net is trained, using a supervised learning approach.  Random perturbations of C/F mesh splittings are created and evaluated, and then used to train some sort of neural network.  The problems discussed are: $(1)$ a 1D variable coefficient Poisson equation, and $(2)$ a 2D recirculating flow convection-diffusion problem with specific parameters.
+In this paper, a method of training neural networks to train convergence rates for a specific PDE or class of equations is introduced.  The neural networks take as input a C/F splitting of a mesh, the output of an AMG aggregation/splitting method, and gives a rate of convergence between $0$ and $1$, inclusive.  Lower values of convergence indicate faster methods -- more of the error is dissipated at each iteration.  Two problems are discussed here: $(1)$ a 1D variable coefficient Poisson equation, and $(2)$ a 2D recirculating flow convection-diffusion problem with specific parameters.  Sections \ref{subsec:methods_poisson} and \ref{subsec:methods_conv} describe how random grid splittings are generated for the two problems and evaluated in a multigrid solver.
+
+For the 1D poisson case, convolutional neural networks (CNNs) are trained to predict the convergence rate and optimal relaxation weight (Section \ref{subsec:poisson_cnn}).  For the 2D convection-diffusion problem, a CNN was first trained to predict convergence (Section \ref{subsec:conv_cnn}), and then two different graph nets were trained to extrapolate to differently sized inputs and non-grid meshes (Sections \ref{subsec:conv_gcn}, \ref{subsec:conv_mpnn}).  Numerical results consisting of the network error performance and sample predictions are shown in Section \ref{sec:num}.  Finally, further discussion and possible directions of future work is given in Section \ref{sec:conc}.
 
 \section{Methods}\label{sec:methods}
 
-The methods described here will be split into two subsections describing each problem that was explored. First, the Poisson case and the data generation is discussed (Section \ref{subsec:methods_poisson}) followed by the respective convolutional neural network that was trained (Section \ref{subsec:poisson_cnn}).  Afterwards, data generation for the 2D convection-diffusion problem are introduced (Section \ref{subsec:methods_conv}) and an overview of the trained convolutional network is given (Section \ref{subsec:conv_cnn}).  The use of two graph nets is also described: one that performs a simple edge convolution for each node (Section \ref{subsec:conv_gcn}), and another that implements ``message passing'' and learns optimal edge weighting of the convolution (Section \ref{subsec:conv_mpnn}).
+The methods described here will be split into two subsections describing each problem that was explored. First, the Poisson case and the data generation is discussed (Section \ref{subsec:methods_poisson}) followed by the respective convolutional neural network that was trained (Section \ref{subsec:poisson_cnn}).  Afterwards, an overview of the data generation for the 2D convection-diffusion problem is given (Section \ref{subsec:methods_conv}) and then fololowed by a description of the convolutional network that was trained (Section \ref{subsec:conv_cnn}).  The use of two graph nets is also described: one that performs a simple edge convolution for each node (Section \ref{subsec:conv_gcn}), and another that implements ``message passing'' and learns optimal edge weighting of the convolution (Section \ref{subsec:conv_mpnn}).
 
 \subsection{1D Poisson}\label{subsec:methods_poisson}
 
@@ -130,7 +132,7 @@ Formally, the problem being solved is the Poisson equation in one dimension with
   -\grad \cdot \left(k\left(\vec{x}\right) \grad\vec{u}\right) = f
 \end{equation}
 
-With the right hand side $f\left(\vec{x}\right)=\vec{x}$ being arbitrarily chosen.  \ref{eqn:poisson} is discretized using finite differences on a grid of $N=31$ internal points on the domain $\Omega = \left[-1, 1\right]$ and Dirichlet boundary conditions, $\partial\Omega = 0$.  To preserve the symmetric, positive definite properties of the resulting linear system, the $k\left(\vec{x}\right)$ function is discretized on the grid \textit{midpoints}.
+With the right hand side $f\left(\vec{x}\right)=\vec{x}$ being arbitrarily chosen.  \ref{eqn:poisson} is discretized using finite differences on a grid of $N=31$ internal points on the domain $\Omega = \left[-1, 1\right]$ and Dirichlet boundary conditions, $\partial\Omega = 0$.  To preserve the symmetric, positive definite properties of the resulting linear system, the $k\left(\vec{x}\right)$ function is discretized on the grid \textit{midpoints}\cite{numpde}.
 
 Before the neural network can be trained, a dataset of approximately 300,000 random C/F grid splittings and their computed convergence rate and optimal relaxation weight was generated.  A set of $6$ reference grids were first created according to various ``coarsening'' factors:
 
@@ -138,13 +140,13 @@ Before the neural network can be trained, a dataset of approximately 300,000 ran
   r = \begin{Bmatrix} 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9\end{Bmatrix}
 \end{equation}
 
-With each of the values in \ref{eqn:poisson_coarsening}, say $r_i = j$ refers to a grid in which each $j$th point is coarse, and the rest fine.  So, a coarsening by $3$ is a grid that has roughly $\frac{1}{3}$ of its distribution of points as coarse and all others fine.  Each of these reference grids was randomly permuted such that each grid point had a random probability of being flipped to the opposite value -- coarse point to fine and fine point to coarse.  For each reference grid, approximately 1000 random trials of every following probability were run:
+With each of the values in \ref{eqn:poisson_coarsening}, say $r_i = j$ refers to a grid in which each $j$th point is coarse, and the rest fine.  So, a coarsening by $3$ is a grid that has roughly $\frac{1}{3}$ of its distribution of points as coarse and all others fine.  Each of these reference grids was randomly permuted such that each grid point had a random probability of being flipped to the opposite value -- coarse point to fine and fine point to coarse.  For each reference grid, approximately 1000 random trials of each following probability were run:
 
 \begin{equation} \label{eqn:poisson_probabilities}
   p = \begin{Bmatrix} 0.01 & 0.05 & 0.1 & 0.25 & 0.5 & 0.75 \end{Bmatrix}
 \end{equation}
 
-Additionally, each trial was run with a randomly-chosen function for the variable coefficients $k\left(\vec{x}\right)$.  These are chosen from the set below, with coefficient values specifically chosen to prevent the function from being non-positive at any value in $\Omega$.
+Additionally, each trial was run with a randomly-chosen function for the variable coefficients $k\left(\vec{x}\right)$.  These are chosen from the set below, with coefficient values specifically picked to prevent the function from being non-positive at any value in $\Omega$.
 
 \begin{equation} \label{eqn:poisson_varcoefficients}
 k\left(x\right) = \begin{cases}
@@ -155,23 +157,23 @@ k\left(x\right) = \begin{cases}
 \end{cases}
 \end{equation}
 
-The full set of C/F splittings is then given to a 2 level V-cycle Multigrid solver that is run for a maximum of 15 iterations.  The solver is composed of one round of weighted Jacobi pre-smoothing, a coarse error correction, then another round of Jacobi post-smoothing.  At each iteration, the absolute error between the approximation and the ``exact'' solution (pre-computed via sparse linear solve) is found and saved: $e_i = \norm{\mat{A}^{-1}\vec{f} - \vec{u}_i}$.  This sequence of errors is then used to compute the average convergence rate.  To acquire the optimal relaxation weight, the smoother is run through a bracketed numerical optimization method with the assumption that the convergence rate is unimodal as a function of relaxation weight. \footnote{Experimental testing generally asserts this to be true, however this will remain a conjecture for now.}
+The full set of C/F splittings was then given to a 2 level V-cycle Multigrid solver that was run for a maximum of 15 iterations.  The solver is composed of one round of weighted Jacobi pre-smoothing, a coarse error correction, then another round of Jacobi post-smoothing.  At each iteration, the absolute error between the approximation and the ``exact'' solution (pre-computed via sparse linear solve) was found and saved: $e_i = \norm{\mat{A}^{-1}\vec{f} - \vec{u}_i}$.  This sequence of errors was then used to compute the average convergence rate.  To acquire the optimal relaxation weight, the smoother was run through a bracketed numerical optimization method with the assumption that the convergence rate is unimodal as a function of relaxation weight. \footnote{Experimental testing generally asserts this to be true, however this will remain a conjecture for now.}
 
 \subsection{Poisson CNN}\label{subsec:poisson_cnn}
 
 Two separate deep convolutional networks with residual connections were trained to separately predict the optimal relaxation weight and convergence rate when given a linear C/F splitting.  The architecture for both networks is identical and a textual overview is given here:
 
 \begin{enumerate}
-\item 6 1D CNN layers of kernel 7, input two channels output 7 channels.  Padding by three on each side to keep dimensions.
-\item 6 CNN layers of kernel 5, input/output 7 channels.  Padding by two on each side.
-\item 6 CNN layers of kernel 3, input/output 7 channels.  Padding by 1 on each side.
+\item 6 1D CNN layers of kernel size 7, input 2 channels output 7 channels.  Padding by three on each side to keep dimensions static.
+\item 6 CNN layers of kernel size 5, input/output 7 channels.  Padding by two on each side.
+\item 6 CNN layers of kernel size 3, input/output 7 channels.  Padding by 1 on each side.
 \item Max-pooling layer of kernel 2, stride 2.  Effectively reduces input size by half.
 \item 8 Fully-connected layers to gradually reduce output to a scalar describing the convergence or relaxation weight.
 \end{enumerate}
 
 Each layer is followed by an implicit ReLU nonlinear activation function.  Because the convolutional layers (except for the first) keep the input and output size static, we are able to push residual values and skip layers similarly to a ResNet.  Even numbered layers $n$ take as input both the output of layers $n-1$ and $n-2$, while odd-numbered layers only use the output from layer $n-1$.
 
-The C/F splitting is remapped such that a coarse point is given a value of $1$ and a fine point the value of $-1$.  The variable coefficients were also re-discretized to be defined on the nodal points instead of midpoints in order for the splitting and coefficients to be represented by vectors of same length.  These two were then stacked into a two-channel tensor for input into the CNN.  When training, input values (convergence rate and relaxation weight) are normalized to be within the range of $\left[0,1\right]$.  This normalization is undone when output is displayed.
+The C/F splitting is remapped such that a coarse point is given a value of $1$ and a fine point the value of $-1$.  The variable coefficients were also re-discretized to be defined on the nodal points instead of midpoints in order for the splitting and coefficients to be represented by vectors of same length.  These two were then stacked into a two-channel tensor for input into the CNN.  When training, input values (convergence rate and relaxation weight) are normalized to be within the range of $\left[0,1\right]$.  This normalization is undone when the output is displayed.
 
 \subsection{2D Convection-Diffusion}\label{subsec:methods_conv}
 
@@ -181,7 +183,9 @@ This specific problem models what is called the \textit{double glazing problem},
   -k\grad^2u + \vec{w}\cdot\grad u = f
 \end{equation}
 
-The wind velocity function, $\vec{w}\left(x,y\right)$ is defined as $\vec{w}\left(x,y\right)=\\ \begin{bmatrix} 2y\left(1-x^2\right) & 2x\left(1-y^2\right) \end{bmatrix}$.  The domain is a square of side length two centered at the origin, $\Omega = \left[-1,1\right] \times \left[-1,1\right]$.  Dirichlet boundary conditions are defined on $\partial \Omega$, with the one ``hot'' wall defined on $x=1$ with value $\partial \Omega_H=1$.  The other boundaries are ``cold'' walls with $\partial \Omega_c=0$.  A diffusivity constant of $k=0.1$ is used. This PDE is discretized using finite-elements on a structured grid of 25x25 internal points.  Using a grid as a basis for the discretization allows use of both CNN and more sophisticated graph convolutional techniques.
+The wind velocity function, $\vec{w}\left(x,y\right)$ is defined as $\vec{w}\left(x,y\right)=\\ \begin{bmatrix} 2y\left(1-x^2\right) & 2x\left(1-y^2\right) \end{bmatrix}$.  The domain is a square of side length two centered at the origin, $\Omega = \left[-1,1\right] \times \left[-1,1\right]$.  Dirichlet boundary conditions are defined on $\partial \Omega$, with the one ``hot'' wall defined on $x=1$ with value $\partial \Omega_H=1$.  The other boundaries are ``cold'' walls with $\partial \Omega_c=0$.  A diffusivity constant of $k=0.1$ is used.  This problem is derived from an example by Elman, Silvester, and Wathen\cite{silvester}.
+
+This PDE is discretized using finite-elements on a structured grid of 25x25 internal points.  Using a grid as a basis for the discretization allows use of both CNN and more sophisticated graph convolutional techniques.
 
 Generating a dataset of mesh splittings and convergence rates was done in an overall similar way to the 1D Poisson equation with a few notable differences.  Again, a set of reference C/F splittings were generated that are later permuted.  For the convection-diffusion case, the following reference splittings were used:
 
@@ -250,7 +254,7 @@ y &= \sum_{j=1}^n \sigma\left( \sigma\left(\mat{r}_j\mat{W}^{(5)} + \vec{b}^{(5)
 Note that the matrix $\mat{R}$ is formed whose columns are the propagation history of each node; this is an attempt to emulate traditional ResNet architectures.  The final scalar output is computed by summing each column of $\mat{R}$ through a two layer fully-connected neural network, with the first layer taking as input 9 features and outputting 5 features, and the second layer taking as input 5 features and outputting 1 feature.  This local transformation of each nodal value following by a global averaging removes any dependency for a fixed input size -- instead any sized graph and splitting could (in theory) be used.
 
 \subsection{Convection-Diffusion Message Passing Network (MPNN)}\label{subsec:conv_mpnn}
-A downside of the GCN layer, while being simple to implement and understand, is that it does not effectively learn edge features between nodes and thus is only an approximation of a convolution on a graph.  The Edge-Conditioned Convolution (ECC) layer, as defined by Simonovsky and Komodakis\cite{ecc}, attempts to combat this by learning optimal edge weights given an arbitrary node-edge neighborhood.  This approach is also referred to as a ``message-passing network'', as each connected neighbor attempts to learn a ``message'' that is passed to the original node.  The convolution operation is defined as:
+A downside of the GCN layer, while being simple to implement and understand, is that it does not effectively learn edge features between nodes and thus is only an approximation of a convolution on a graph.  The Edge-Conditioned Convolution (ECC) layer, as defined by Simonovsky and Komodakis\cite{ecc}, attempts to combat this by learning optimal edge weights given an arbitrary node-edge neighborhood.  This approach is also referred to as a ``message-passing network'', as each connected neighbor attempts to learn a ``message'' that is passed to the original node.\cite{mpnn}  The convolution operation is defined as:
 
 \begin{equation}\label{eqn:mpnn_prop}
   \left(\mat{H}^{(i)}\right)_j = \frac{1}{\abs{\mathcal{N}\left(j\right)}} \sum_{k\in\mathcal{N}\left(j\right)} F^{(i)}\left(e_{j,k}\right)\left(\mat{H}^{(i-1)}\right)_k + \vec{b}^{(i)}
@@ -263,7 +267,35 @@ Using the ECC layer, another graph net was trained to predict the convergence ra
 
 \section{Numerical Results}\label{sec:num}
 
+\begin{table}[t]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+Model & Metric & Dataset & Value \\
 
+\hline
+Jacobi Weight & MSE & Training & 0.0018331280443817377 \\
+Jacobi Weight & MSE & Testing & 0.0018395978258922696 \\
+Jacobi Weight & L1 & Training & 0.029253767424938727 \\
+Jacobi Weight & L1 & Testing & 0.029271099756634424 \\
+\hline
+Convergence Factor & MSE & Training & 0.001483894418925047 \\
+Convergence Factor & MSE & Testing & 0.0015170895494520664 \\
+Convergence Factor & L1 & Training & 0.023908496504070377 \\
+Convergence Factor & L1 & Testing & 0.023865242609902033 \\
+\hline
+\end{tabular}
+\caption{Final training and testing Mean Squared Error (MSE)/$L^1$-norm loss values for the two Poisson models.  Lower values correspond to higher model accuracy.}
+\label{tab:poisson_loss}
+\end{table}
+
+\subsection{1D Poisson}
+
+A total of 336,000 C/F ``grid'' splittings were randomly generated for the variable-coefficient Poisson model.  Of these, a random 85\% of data items were designated as a training set and the remaining 15\% reserved for a testing set.  The relaxation and convergence CNNs were trained for a total of 30 epochs each, where each epoch is a total pass over all training set entries.  Models were trained using an MSE loss, and final loss values for both networks are detailed in Table \ref{tab:poisson_loss}.
+
+Sample convergence rate predictions on the training and testing subsets are shown in Figure \ref{fig:poisson_conv_pred}; these plots display predicted rates as a function of the true rates, so error is indicated by deviation from the diagonal of the plots.  It is interesting to visually see that the network has an easier time predicting more convergent grids ($\c < 0.6$ or so) than more degenerate grids.  A lack of predictions less than $\approx 0.1$ is a deficiency of the input data not having grids with those convergence values.
+
+Predictions for relaxation weights on both training and testing subsets are shown in Figure \ref{fig:poisson_jacobi_pred}.  Like the previous convergence plots, more accurate predictions are closer to the plot diagonals.  There is a positive correlation between the predictions and the true values, though unlike the convergence rates there is no obvious ``split'' in the prediction data.  The lack of predictions below $0.1$ is likely to also be caused by the input data.
 
 \begin{figure}[h]
   \centering
@@ -297,59 +329,9 @@ Using the ECC layer, another graph net was trained to predict the convergence ra
   \label{fig:poisson_jacobi_pred}
 \end{figure}
 
-\begin{table}[t]
-\centering
-\begin{tabular}{|l|l|l|l|}
-\hline
-Model & Metric & Dataset & Value \\
+\subsection{2D Convection-Diffusion}
 
-\hline
-Jacobi Weight & MSE & Training & 0.0018331280443817377 \\
-Jacobi Weight & MSE & Testing & 0.0018395978258922696 \\
-Jacobi Weight & L1 & Training & 0.029253767424938727 \\
-Jacobi Weight & L1 & Testing & 0.029271099756634424 \\
-\hline
-Convergence Factor & MSE & Training & 0.001483894418925047 \\
-Convergence Factor & MSE & Testing & 0.0015170895494520664 \\
-Convergence Factor & L1 & Training & 0.023908496504070377 \\
-Convergence Factor & L1 & Testing & 0.023865242609902033 \\
-\hline
-\end{tabular}
-\caption{Final training and testing Mean Squared Error (MSE)/$L^1$-norm loss values for the two Poisson models.  Lower values correspond to higher model accuracy.}
-\label{tab:poisson_loss}
-\end{table}
-
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figs/cd_conv_test_pred.png}
-    \caption{Testing predictions}
-    \label{subfig:cd_conv_test}
-  \end{subfigure}
-  \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figs/cd_conv_train_pred.png}
-    \caption{Training predictions}
-    \label{subfig:cd_conv_train}
-  \end{subfigure}
-  \caption{Predicted convergence rates vs. true convergence rates on (\ref{subfig:cd_conv_test}) testing and (\ref{subfig:cd_conv_train}) training datasets for model convection-diffusion problem, using a convolutional network. Values closer to the diagonal represent more accurate predictions. }
-  \label{fig:cd_conv_pred}
-\end{figure}
-
-\begin{figure}[h]
-  \centering
-  \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figs/cd_var_conv_mpnn_test_pred.png}
-    \caption{Testing predictions}
-    \label{subfig:cd_mpnn_test}
-  \end{subfigure}
-  \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figs/cd_var_conv_mpnn_train_pred.png}
-    \caption{Training predictions}
-    \label{subfig:cd_mpnn_train}
-  \end{subfigure}
-  \caption{Predicted convergence rates vs. true convergence rates on (\ref{subfig:cd_mpnn_test}) testing and (\ref{subfig:cd_mpnn_train}) training datasets for model convection-diffusion problem, using an Edge-Conditioned Convolution network. Values closer to the diagonal represent more accurate predictions. }
-  \label{fig:cd_mpnn_pred}
-\end{figure}
+Two datasets were created for the 2D recirculating flow problem: a set of \textit{statically-sized} C/F splittings and a set of \textit{variably-sized} splittings; both datasets consisted of $84,000$ elements.  The variably-sized dataset was evenly divided into the four mesh sizes: $15\times 15,\: 25\times 25,\: 35\times 35,\: 50\times 50$.  Each dataset was then split 85\%-15\% into training and testing subsets.  All neural networks were trained for 10 epochs each on an MSE loss, final loss values are detailed in Table \ref{tab:conv_loss}.  The recirculating flow CNN was trained and tested on the static dataset, while the two graph nets were trained on the variable dataset and evaluted on both datasets.  The CNN had the best performance for the static dataset, though the GCN network was very close despite it being trained on a completely different set of data.  However, the ECC (MPNN) network had better predictive performance than the GCN network over the entire variable dataset.
 
 \begin{table}[t]
 \centering
@@ -373,11 +355,53 @@ Variable & MPNN & MSE & 0.011495419777929783 \\
 Variable & MPNN & L1 & 0.07996731251478195 \\
 \hline
 \end{tabular}
-\caption{Final testing Mean Squared Error (MSE)/$L^1$-norm loss values for trained neural networks.  Lower values correspond to higher model accuracy.}
+\caption{Final testing Mean Squared Error (MSE)/$L^1$-norm loss values for trained neural networks for the recirculating flow problem.  Lower values correspond to higher model accuracy.}
 \label{tab:conv_loss}
 \end{table}
 
-\section{Conclusions}\label{sec:conc}
+Predicted convergence values by the CNN over the static dataset are displayed in Figure \ref{fig:cd_conv_pred}.  The subplots detail predicted convergence rates vs their true value for each C/F splitting.  Almost opposite to the phenomenon observed in the Poisson CNN (Figure \ref{fig:poisson_conv_pred}, the network predicts more poorly converging grids accurately.  This could perhaps be explained by the data more densely populated with the poor convergence grids, and has a distinct lack of optimal grids.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figs/cd_conv_test_pred.png}
+    \caption{Testing predictions}
+    \label{subfig:cd_conv_test}
+  \end{subfigure}
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figs/cd_conv_train_pred.png}
+    \caption{Training predictions}
+    \label{subfig:cd_conv_train}
+  \end{subfigure}
+  \caption{Predicted convergence rates vs. true convergence rates on (\ref{subfig:cd_conv_test}) testing and (\ref{subfig:cd_conv_train}) training datasets for model convection-diffusion problem, using a convolutional network. Values closer to the diagonal represent more accurate predictions. }
+  \label{fig:cd_conv_pred}
+\end{figure}
+
+Convergence predictions by the ECC network over the variable-size dataset are given in Figure \ref{fig:cd_mpnn_pred}.  Various horizontal trends of predictions are visible in the plots, with distinct subsets of convergence factors all being predicted as the same value.  Further tweaking of the network architecture is likely necessary to achieve more accuracy in the predictions.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figs/cd_var_conv_mpnn_test_pred.png}
+    \caption{Testing predictions}
+    \label{subfig:cd_mpnn_test}
+  \end{subfigure}
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figs/cd_var_conv_mpnn_train_pred.png}
+    \caption{Training predictions}
+    \label{subfig:cd_mpnn_train}
+  \end{subfigure}
+  \caption{Predicted convergence rates vs. true convergence rates on (\ref{subfig:cd_mpnn_test}) testing and (\ref{subfig:cd_mpnn_train}) training datasets for model convection-diffusion problem, using an Edge-Conditioned Convolution network. Values closer to the diagonal represent more accurate predictions.}
+  \label{fig:cd_mpnn_pred}
+\end{figure}
+
+\section{Discussion and Conclusions}\label{sec:conc}
+
+In this paper, a method for training convolutional and graph nets was presented to predict convergence of a two-level multigrid solver when given an input C/F mesh splitting.  Random mesh splittings were generated from a set of reference grids for two model problems, then evaluated in a solver to find a reference convergence rate.  Additionally for the Poisson problem, a CNN to predict optimal smoothing weight was trained.
+
+Results indicate that neural networks can indeed predict convergence for a multigrid solver.  Convolutional networks are effective at learning attributes on structured grid-like 1D or 2D meshes, and graph nets are able to generalize on variably-sized structured meshes.  The graph networks could be further developed and trained on more general classes of problems, instead of the specific convection-diffusion problem or the variable-coefficent Poisson equation.
+
+Future works could build on the networks trained here and explore their applications, using them for example to pick between different AMG aggregation methods to find the most optimal for a specific use case.  Another more ambitious future work could be to use the neural networks in an optimization method to obtain the most convergent or most work efficient C/F splitting for a problem.
 
 \bibliographystyle{siamplain}
 \bibliography{references}
