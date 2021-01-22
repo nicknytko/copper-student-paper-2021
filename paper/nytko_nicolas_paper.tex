@@ -126,43 +126,45 @@ The methods described here will be split into two subsections describing each pr
 
 \subsection{1D Poisson}\label{subsec:methods_poisson}
 
-Formally, the problem being solved is the Poisson equation in one dimension with variable coefficients:
-
+Formally, the problem being solved is the Poisson equation in one dimension with variable coefficients
+%
 \begin{equation} \label{eqn:poisson}
-  -\grad \cdot \left(k\left(\vec{x}\right) \grad\vec{u}\right) = f
+  -\grad \cdot \left(k\left(\vec{x}\right) \grad\vec{u}\right) = f,
 \end{equation}
-
-With the right hand side $f\left(\vec{x}\right)=\vec{x}$ being arbitrarily chosen.  \ref{eqn:poisson} is discretized using finite differences on a grid of $N=31$ internal points on the domain $\Omega = \left[-1, 1\right]$ and Dirichlet boundary conditions, $\partial\Omega = 0$.  To preserve the symmetric, positive definite properties of the resulting linear system, the $k\left(\vec{x}\right)$ function is discretized on the grid \textit{midpoints}\cite{numpde}.
+%
+with the right-hand side $f\left(\vec{x}\right)=\vec{x}$ being arbitrarily chosen.  Eqn.~\eqref{eqn:poisson} is discretized using finite differences on a grid of $N=31$ internal points on the domain $\Omega = \left[-1, 1\right]$ and Dirichlet boundary conditions, $\partial\Omega = 0$.  To preserve the symmetric, positive definite properties of the resulting linear system, the $k\left(\vec{x}\right)$ function is discretized on the grid \textit{midpoints}\cite{numpde}.
 
 Before the neural network can be trained, a dataset of approximately 300,000 random C/F grid splittings and their computed convergence rate and optimal relaxation weight was generated.  A set of $6$ reference grids were first created according to various ``coarsening'' factors:
-
+%
 \begin{equation} \label{eqn:poisson_coarsening}
-  r = \begin{Bmatrix} 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9\end{Bmatrix}
+  r = \begin{Bmatrix} 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9\end{Bmatrix}.
 \end{equation}
-
-With each of the values in \ref{eqn:poisson_coarsening}, say $r_i = j$ refers to a grid in which each $j$th point is coarse, and the rest fine.  So, a coarsening by $3$ is a grid that has roughly $\frac{1}{3}$ of its distribution of points as coarse and all others fine.  Each of these reference grids was randomly permuted such that each grid point had a random probability of being flipped to the opposite value -- coarse point to fine and fine point to coarse.  For each reference grid, approximately 1000 random trials of each following probability were run:
-
+%
+Each of the values in \ref{eqn:poisson_coarsening}, say $r_i = j$ refers to a grid in which each $j$th point is coarse, and the rest fine.  So, a coarsening by $3$ is a grid that has roughly $\frac{1}{3}$ of its distribution of points as coarse and all others fine.  Each of these reference grids was randomly permuted such that each grid point had a random probability of being flipped to the opposite value -- coarse point to fine and fine point to coarse.  For each reference grid, approximately 1000 random trials of each following probability were run:
+%
 \begin{equation} \label{eqn:poisson_probabilities}
   p = \begin{Bmatrix} 0.01 & 0.05 & 0.1 & 0.25 & 0.5 & 0.75 \end{Bmatrix}
 \end{equation}
-
-Additionally, each trial was run with a randomly-chosen function for the variable coefficients $k\left(\vec{x}\right)$.  These are chosen from the set below, with coefficient values specifically picked to prevent the function from being non-positive at any value in $\Omega$.
-
+%
+Additionally, each trial was run with a randomly-chosen function for the variable coefficients $k\left(\vec{x}\right)$.  The function is randomly chosen from
+%
 \begin{equation} \label{eqn:poisson_varcoefficients}
-k\left(x\right) = \begin{cases}
+k\left(\vec{x}\right) = \begin{cases}
 \alpha & 0 < \alpha < 10 \\
 \text{rand()}\left(\alpha + 1\right) & 0 < \alpha < 10 \\
 \alpha\cos\left(\pi x \beta\right) + \gamma & 0 < \alpha < 10, 0 < \beta < 10, \alpha < \gamma < 10\\
 \abs{\sum_{i=1}^5 \alpha_i x^i} + 0.01 & -10 < \alpha < 10
-\end{cases}
+\end{cases},
 \end{equation}
+%
+with coefficient values specifically picked to prevent the function from being non-positive at any value in $\Omega$.
 
 The full set of C/F splittings was then given to a 2 level V-cycle Multigrid solver that was run for a maximum of 15 iterations.  The solver is composed of one round of weighted Jacobi pre-smoothing, a coarse error correction, then another round of Jacobi post-smoothing.  At each iteration, the absolute error between the approximation and the ``exact'' solution (pre-computed via sparse linear solve) was found and saved: $e_i = \norm{\mat{A}^{-1}\vec{f} - \vec{u}_i}$.  This sequence of errors was then used to compute the average convergence rate.  To acquire the optimal relaxation weight, the smoother was run through a bracketed numerical optimization method with the assumption that the convergence rate is unimodal as a function of relaxation weight. \footnote{Experimental testing generally asserts this to be true, however this will remain a conjecture for now.}
 
 \subsection{Poisson CNN}\label{subsec:poisson_cnn}
 
 Two separate deep convolutional networks with residual connections were trained to separately predict the optimal relaxation weight and convergence rate when given a linear C/F splitting.  The architecture for both networks is identical and a textual overview is given here:
-
+%
 \begin{enumerate}
 \item 6 1D CNN layers of kernel size 7, input 2 channels output 7 channels.  Padding by three on each side to keep dimensions static.
 \item 6 CNN layers of kernel size 5, input/output 7 channels.  Padding by two on each side.
@@ -170,7 +172,7 @@ Two separate deep convolutional networks with residual connections were trained 
 \item Max-pooling layer of kernel 2, stride 2.  Effectively reduces input size by half.
 \item 8 Fully-connected layers to gradually reduce output to a scalar describing the convergence or relaxation weight.
 \end{enumerate}
-
+%
 Each layer is followed by an implicit ReLU nonlinear activation function.  Because the convolutional layers (except for the first) keep the input and output size static, we are able to push residual values and skip layers similarly to a ResNet.  Even numbered layers $n$ take as input both the output of layers $n-1$ and $n-2$, while odd-numbered layers only use the output from layer $n-1$.
 
 The C/F splitting is remapped such that a coarse point is given a value of $1$ and a fine point the value of $-1$.  The variable coefficients were also re-discretized to be defined on the nodal points instead of midpoints in order for the splitting and coefficients to be represented by vectors of same length.  These two were then stacked into a two-channel tensor for input into the CNN.  When training, input values (convergence rate and relaxation weight) are normalized to be within the range of $\left[0,1\right]$.  This normalization is undone when the output is displayed.
@@ -178,11 +180,11 @@ The C/F splitting is remapped such that a coarse point is given a value of $1$ a
 \subsection{2D Convection-Diffusion}\label{subsec:methods_conv}
 
 This specific problem models what is called the \textit{double glazing problem}, modeling the temperature distribution of a cavity with a single ``hot'' wall.  This is given by the differential equation:
-
+%
 \begin{equation}\label{eqn:conv}
-  -k\grad^2u + \vec{w}\cdot\grad u = f
+  -k\grad^2u + \vec{w}\cdot\grad u = f.
 \end{equation}
-
+%
 The wind velocity function, $\vec{w}\left(x,y\right)$ is defined as $\vec{w}\left(x,y\right)=\\ \begin{bmatrix} 2y\left(1-x^2\right) & 2x\left(1-y^2\right) \end{bmatrix}$.  The domain is a square of side length two centered at the origin, $\Omega = \left[-1,1\right] \times \left[-1,1\right]$.  Dirichlet boundary conditions are defined on $\partial \Omega$, with the one ``hot'' wall defined on $x=1$ with value $\partial \Omega_H=1$.  The other boundaries are ``cold'' walls with $\partial \Omega_c=0$.  A diffusivity constant of $k=0.1$ is used.  This problem is derived from an example by Elman, Silvester, and Wathen\cite{silvester}.
 
 This PDE is discretized using finite-elements on a structured grid of 25x25 internal points.  Using a grid as a basis for the discretization allows use of both CNN and more sophisticated graph convolutional techniques.
@@ -200,11 +202,11 @@ Generating a dataset of mesh splittings and convergence rates was done in an ove
 \end{enumerate}
 
 The entries of each individual reference splitting were then randomly permuted according to a defined probability.  The probability values used are the same as those in the Poisson case, repeated here for convenience:
-
+%
 \begin{equation} \label{eqn:conv_probabilities}
-  p = \begin{Bmatrix} 0.01 & 0.05 & 0.1 & 0.25 & 0.5 & 0.75 \end{Bmatrix}
+  p = \begin{Bmatrix} 0.01 & 0.05 & 0.1 & 0.25 & 0.5 & 0.75 \end{Bmatrix}.
 \end{equation}
-
+%
 Generated splittings that are unsolveable (i.e., consist of no coarse points) were rejected and their trial re-run.  This generated set of C/F splittings was passed along to another 2 level V-cycle multigrid solver run for a maximum of 50 iterations.  This solver performs two rounds of Jacobi pre-and-post smoothing, with a coarse error correction between the smoothing steps.  The absolute error between the approximation at each iteration and the ``exact'' solution was computed and saved, with the full sequence used to find the average convergence rate.  Note the optimal Jacobi relaxation weight was not found here, as experimentation found that the optimal weight would nearly always be $1$.
 
 The convection-diffusion problem was additionally re-discretized at 4 different mesh sizes: $15\times 15,\enskip 25\times 25,\enskip 35\times 35,\enskip 50\times 50$.  The above process was re-run for each mesh size to generate a new dataset for use in the graph nets.  To distinguish between the two datasets, they will hereby be referred to as the \textit{statically-sized} (only containing $25 \times 25$ mesh and splittings) and the \textit{variably-sized} datasets.
@@ -212,7 +214,7 @@ The convection-diffusion problem was additionally re-discretized at 4 different 
 \subsection{Convection-Diffusion CNN}\label{subsec:conv_cnn}
 
 A 2D convolutional network was trained on the statically-sized dataset to predict convergence when given a C/F splitting for the specific recirculating flow problem.  Since the input parameters are slightly less complex, a less deep (\textit{shallower}, if you will) network was trained:
-
+%
 \begin{enumerate}
 \item 3 2D CNN layers of kernel 7, input two channels output 7 channels.  Padding by three on each side to keep dimensions.
 \item 3 CNN layers of kernel 5, input/output 7 channels.  Padding by two on each side.
@@ -220,7 +222,7 @@ A 2D convolutional network was trained on the statically-sized dataset to predic
 \item 2D Max-pooling layer of kernel 2, stride 2.  Effectively reduces input size by half.
 \item 1 Fully-connected layer to reduce output to a scalar predicting convergence rate.
 \end{enumerate}
-
+%
 Each layer is followed by a ReLU nonlinear activation function.  Odd layers are fed the output of the previous two layers, while even layers are fed the input of only the previous layer, similarly to a ResNet.  C/F splittings are mapped so that coarse points have value $1$ and fine points have value $-1$.  The CNN thus has a $25\times 25=625$-length vector as input.  Interestingly, normalization of the convergence rates is unneeded as the minimum and maximum recorded values are already close to $0$ and $1$, respectively.
 
 \subsection{Convection-Diffusion Graph Convolutional Network (GCN)}\label{subsec:conv_gcn}
@@ -230,17 +232,19 @@ The main downside of using traditional convolutional layers is that they are use
 For the graphnets, the sparse FEM system was re-interpreted as a graph by assigning each row/column to be a node and defining connectivity between nodes as nonzero matrix entries.  Edge weights were taken to be the entry values themselves, although normalized to be within the range of $[0, 1]$.   This network was trained on the variably-sized dataset; as will be seen, the lack of any fully-connected layers allows for any arbitrary input.
 
 The Graph Convolutional Network (GCN) layer is defined as an operator on the graph Laplacian, using the following propagation rule:
+%
 \begin{equation}
-  \mat{H}^{\left(i\right)} = \sigma\left( \mat{\tilde{D}}^{-\frac{1}{2}} \mat{\tilde{A}} \mat{\tilde{D}}^{-\frac{1}{2}} \mat{H}^{\left(i-1\right)} \mat{W}^{\left(i\right)} + \vec{b}^{(i)} \right)
+  \mat{H}^{\left(i\right)} = \sigma\left( \mat{\tilde{D}}^{-\frac{1}{2}} \mat{\tilde{A}} \mat{\tilde{D}}^{-\frac{1}{2}} \mat{H}^{\left(i-1\right)} \mat{W}^{\left(i\right)} + \vec{b}^{(i)} \right).
 \end{equation}
+%
 With $\mat{H}^{\left(i\right)}$ being the $i$'th hidden layer, $\mat{\tilde{A}} = \mat{A} + \mat{I}$ the adjacency matrix with added self loops, $\tilde{d}_{ii}=\sum_j\tilde{a}_{ij}$ a diagonal matrix consisting of the sum of outgoing edge weights, $\mat{W}^{(i)}$ the weight matrix at layer $i$, $\vec{b}^{(i)}$ a learned bias vector with same shape as $\mat{H}^{(i)}$, and $\sigma\left(\cdot\right)$ some nonlinear activation function.  Hidden layers have dimensions $n \times f$, with $n$ the number of graph nodes and $f$ the number of features at each node.  Thus, using only GCN layers it is not possible to reduce the number of rows in hidden layers (or the input layer for that matter).
 
 Assume $\sigma\left(\cdot\right) = \text{ReLU}\left(\cdot\right) = \text{max}\left\{\cdot, 0\right\}$ for all activation functions.  Let $\mat{X}$ be the $n \times 1$ vector containing C/F splitting values for each node.  The network that was trained for this application consisted of the following architecture:
 \begin{align*}
-\mat{H}^{(1)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{X} \mat{W}^{(1)} + \vec{b}^{(1)} \right) \in \mathbb{R}^{n \times 2} \\
-\mat{H}^{(2)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{H}^{(1)} \mat{W}^{(2)} + \vec{b}^{(2)}\right) \in \mathbb{R}^{n \times 3}\\
-  \mat{H}^{(3)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{H}^{(2)} \mat{W}^{(3)} + \vec{b}^{(3)}\right) \in \mathbb{R}^{n \times 2}\\
-  \mat{H}^{(4)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{H}^{(3)} \mat{W}^{(4)} + \vec{b}^{(4)}\right) \in \mathbb{R}^{n \times 1}\\
+\mat{H}^{(1)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{X} \mat{W}^{(1)} + \vec{b}^{(1)} \right) \in \mathbb{R}^{n \times 2} \displaybreak[0] \\
+\mat{H}^{(2)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{H}^{(1)} \mat{W}^{(2)} + \vec{b}^{(2)}\right) \in \mathbb{R}^{n \times 3} \displaybreak[0]\\
+  \mat{H}^{(3)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{H}^{(2)} \mat{W}^{(3)} + \vec{b}^{(3)}\right) \in \mathbb{R}^{n \times 2} \displaybreak[0]\\
+  \mat{H}^{(4)} &= \sigma\left( \mat{D}^{-\frac{1}{2}} \mat{A} \mat{D}^{-\frac{1}{2}} \mat{H}^{(3)} \mat{W}^{(4)} + \vec{b}^{(4)}\right) \in \mathbb{R}^{n \times 1} \displaybreak[0]\\
 \mat{R} &=
 \begin{bmatrix}
 \hdots & \mat{X}^T & \hdots \\
@@ -248,18 +252,20 @@ Assume $\sigma\left(\cdot\right) = \text{ReLU}\left(\cdot\right) = \text{max}\le
 \hdots & \left(\mat{H}^{(2)}\right)^T & \hdots \\
 \hdots & \left(\mat{H}^{(3)}\right)^T & \hdots \\
 \hdots & \left(\mat{H}^{(4)}\right)^T & \hdots \\
-\end{bmatrix} \in \mathbb{R}^{9 \times n}\\
+\end{bmatrix} \in \mathbb{R}^{9 \times n} \displaybreak[0]\\
 y &= \sum_{j=1}^n \sigma\left( \sigma\left(\mat{r}_j\mat{W}^{(5)} + \vec{b}^{(5)}\right) \mat{W}^{(6)} + \vec{b}^{(6)}\right) \in \mathbb{R}
 \end{align*}
+
 Note that the matrix $\mat{R}$ is formed whose columns are the propagation history of each node; this is an attempt to emulate traditional ResNet architectures.  The final scalar output is computed by summing each column of $\mat{R}$ through a two layer fully-connected neural network, with the first layer taking as input 9 features and outputting 5 features, and the second layer taking as input 5 features and outputting 1 feature.  This local transformation of each nodal value following by a global averaging removes any dependency for a fixed input size -- instead any sized graph and splitting could (in theory) be used.
 
 \subsection{Convection-Diffusion Message Passing Network (MPNN)}\label{subsec:conv_mpnn}
-A downside of the GCN layer, while being simple to implement and understand, is that it does not effectively learn edge features between nodes and thus is only an approximation of a convolution on a graph.  The Edge-Conditioned Convolution (ECC) layer, as defined by Simonovsky and Komodakis\cite{ecc}, attempts to combat this by learning optimal edge weights given an arbitrary node-edge neighborhood.  This approach is also referred to as a ``message-passing network'', as each connected neighbor attempts to learn a ``message'' that is passed to the original node.\cite{mpnn}  The convolution operation is defined as:
-
+A downside of the GCN layer, while being simple to implement and understand, is that it does not effectively learn edge features between nodes and thus is only an approximation of a convolution on a graph.  The Edge-Conditioned Convolution (ECC) layer, as defined by Simonovsky and Komodakis\cite{ecc}, attempts to combat this by learning optimal edge weights given an arbitrary node-edge neighborhood.  This approach is also referred to as a ``message-passing network'', as each connected neighbor attempts to learn a ``message'' that is passed to the original node.\cite{mpnn}  The convolution operation is defined as
+%
 \begin{equation}\label{eqn:mpnn_prop}
   \left(\mat{H}^{(i)}\right)_j = \frac{1}{\abs{\mathcal{N}\left(j\right)}} \sum_{k\in\mathcal{N}\left(j\right)} F^{(i)}\left(e_{j,k}\right)\left(\mat{H}^{(i-1)}\right)_k + \vec{b}^{(i)}
 \end{equation}
-Where $\mat{H}^{\left(i\right)} \in \mathbb{R}^{n \times f_i}$ is the $i$'th hidden layer, $\mathcal{N}\left(i\right)$ is a map returning the neighborhood of vertex $i$ (including itself), $F^{(i)} \: : \: E \mapsto \mathbb{R}^{f_i \times f_{i-1}}$ is some function (in our case a small fully-connected neural network) that outputs a learned weight matrix given an edge, and $\vec{b}^{(i)}$ is a bias term for layer $i$.  The notation $\left(\mat{H}^{\left(i\right)}\right)_j$ here denotes the $j$'th row of the $i$'th hidden layer.
+%
+where $\mat{H}^{\left(i\right)} \in \mathbb{R}^{n \times f_i}$ is the $i$'th hidden layer, $\mathcal{N}\left(i\right)$ is a map returning the neighborhood of vertex $i$ (including itself), $F^{(i)} \: : \: E \mapsto \mathbb{R}^{f_i \times f_{i-1}}$ is some function (in our case a small fully-connected neural network) that outputs a learned weight matrix given an edge, and $\vec{b}^{(i)}$ is a bias term for layer $i$.  The notation $\left(\mat{H}^{\left(i\right)}\right)_j$ here denotes the $j$'th row of the $i$'th hidden layer.
 
 Using the ECC layer, another graph net was trained to predict the convergence rate given some C/F mesh splitting.  The architecture is identical to that in Section \ref{subsec:conv_gcn} with the exception that the propagation layers $\mat{H}^{(i)}: \hquad i=1\ldots 4$ are replaced with (\ref{eqn:mpnn_prop}) and surrounded with a ReLU activation layer.  Each $F^{(i)}$ is a two-layer fully-connected network taking some edge $\vec{e} \in \mathbb{R}^{f_i}$ and outputting a weight matrix $\mat{\Theta} \in \mathbb{R}^{f_i\times f_{i-1}}$.
 
@@ -274,15 +280,15 @@ Using the ECC layer, another graph net was trained to predict the convergence ra
 Model & Metric & Dataset & Value \\
 
 \hline
-Jacobi Weight & MSE & Training & 0.0018331280443817377 \\
-Jacobi Weight & MSE & Testing & 0.0018395978258922696 \\
-Jacobi Weight & L1 & Training & 0.029253767424938727 \\
-Jacobi Weight & L1 & Testing & 0.029271099756634424 \\
+Jacobi Weight & MSE & Training & $1.8331 \times 10^{-3}$ \\
+Jacobi Weight & MSE & Testing & $1.8396 \times 10^{-3}$ \\
+Jacobi Weight & L1 & Training & $2.9254 \times 10^{-2}$ \\
+Jacobi Weight & L1 & Testing & $2.9271 \times 10^{-2}$ \\
 \hline
-Convergence Factor & MSE & Training & 0.001483894418925047 \\
-Convergence Factor & MSE & Testing & 0.0015170895494520664 \\
-Convergence Factor & L1 & Training & 0.023908496504070377 \\
-Convergence Factor & L1 & Testing & 0.023865242609902033 \\
+Convergence Factor & MSE & Training & $1.4839 \times 10^{-3}$ \\
+Convergence Factor & MSE & Testing & $1.5171 \times 10^{-3}$ \\
+Convergence Factor & L1 & Training & $2.3908 \times 10^{-2}$ \\
+Convergence Factor & L1 & Testing & $2.3865 \times 10^{-2}$ \\
 \hline
 \end{tabular}
 \caption{Final training and testing Mean Squared Error (MSE)/$L^1$-norm loss values for the two Poisson models.  Lower values correspond to higher model accuracy.}
@@ -339,20 +345,20 @@ Two datasets were created for the 2D recirculating flow problem: a set of \texti
 \hline
 Dataset & Model & Metric & Value \\
 \hline
-Static & CNN & MSE & 0.0060331616550683975 \\
-Static & CNN & L1 & 0.05233505368232727 \\
+Static & CNN & MSE & $6.0332 \times 10^{-3}$ \\
+Static & CNN & L1 & $5.2335 \times 10^{-2}$ \\
 \hline
-Static & GCN & MSE & 0.006727844942361116 \\
-Static & GCN & L1 & 0.05577327311038971 \\
+Static & GCN & MSE & $6.7278 \times 10^{-3}$ \\
+Static & GCN & L1 & $5.5773 \times 10^{-2}$ \\
 \hline
-Static & MPNN & MSE & 0.008446050807833672 \\
-Static & MPNN & L1 & 0.07007851451635361 \\
+Static & MPNN & MSE & $8.4461 \times 10^{-3}$ \\
+Static & MPNN & L1 & $7.0079 \times 10^{-2}$ \\
 \hline
-Variable & GCN & MSE & 0.013079090043902397 \\
-Variable & GCN & L1 & 0.08482691645622253 \\
+Variable & GCN & MSE & $1.3079 \times 10^{-2}$ \\
+Variable & GCN & L1 & $8.4827 \times 10^{-2}$ \\
 \hline
-Variable & MPNN & MSE & 0.011495419777929783 \\
-Variable & MPNN & L1 & 0.07996731251478195 \\
+Variable & MPNN & MSE & $1.1495 \times 10^{-2}$ \\
+Variable & MPNN & L1 & $7.9967 \times 10^{-2}$ \\
 \hline
 \end{tabular}
 \caption{Final testing Mean Squared Error (MSE)/$L^1$-norm loss values for trained neural networks for the recirculating flow problem.  Lower values correspond to higher model accuracy.}
