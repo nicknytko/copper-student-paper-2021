@@ -116,7 +116,9 @@ In collaboration with:
 
 \section{Introduction}\label{sec:intro}
 
-Multigrid methods are some of the most widely used linear solvers for sparse systems, particularly ones that arise from the discretization of partial differential equations.  By ``downsampling'' the original problem to a series of smaller and smaller problems, fast convergence can be obtained with minimal work\cite{mgtut}.  The question becomes, what is the optimal way to downsample each problem and obtain a splitting of coarse/fine points?  Classical Algebraic Multigrid (AMG) techniques attempt to answer this by exploiting the structure of the original system to create a set of interpolation operators\cite{rs}.  However, these methods often require careful parameter tweaking to obtain sensible splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
+Multigrid methods are some of the most widely used linear solvers for sparse systems, particularly ones that arise from the discretization of partial differential equations.  By ``downsampling'' the original problem to a series of smaller and smaller problems, fast convergence can be obtained with minimal work\cite{mgtut}.  Optimal ``downsampling'' is critical to the success of the method; classical Algebraic Multigrid (AMG) techniques attempt to create an interpolation operator by exploiting the structure of the original system\cite{rs}.  However, these methods often require careful parameter tweaking to obtain a sensible operator and C/F splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
+
+%% The question becomes, what is the optimal way to downsample each problem and obtain a splitting of coarse/fine points?  Classical Algebraic Multigrid (AMG) techniques attempt to answer this by exploiting the structure of the original system to create a set of interpolation operators\cite{rs}.  However, these methods often require careful parameter tweaking to obtain sensible splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
 
 In this paper, the following research question is addressed: can convergence rates of multigrid solvers be learned, and are neural networks an effective way of learning this attribute on the solver?  The ability to predict this would aid in the use and study of classical AMG methods by allowing users to estimate efficacy ahead of time.  We address this question by introducing a method of generating data and training neural networks to predict convergence rates for a specific PDE or class of equations.  Two problems are discussed here: $(1)$ a 1D variable coefficient Poisson equation, and $(2)$ a 2D recirculating flow convection-diffusion problem with specific parameters.  Sections \ref{subsec:methods_poisson} and \ref{subsec:methods_conv} describe how these random grid splittings are generated for the two problems and evaluated in a multigrid solver.
 
@@ -343,35 +345,51 @@ Predictions for relaxation weights on both training and testing subsets are show
 
 \subsection{2D Convection-Diffusion}
 
-Two datasets were created for the 2D recirculating flow problem: a set of \textit{statically-sized} C/F splittings and a set of \textit{variably-sized} splittings; both datasets consisted of $84,000$ elements.  The variably-sized dataset was evenly divided into the four mesh sizes: $15\times 15,\: 25\times 25,\: 35\times 35,\: 50\times 50$.  Each dataset was then split 85\%-15\% into training and testing subsets.  All neural networks were trained for 10 epochs each on an MSE loss, final loss values are detailed in Table \ref{tab:conv_loss}.  The recirculating flow CNN was trained and tested on the static dataset, while the two graph nets were trained on the variable dataset and evaluted on both datasets.
+Two datasets were created for the 2D recirculating flow problem: a set of \textit{statically-sized} C/F splittings and a set of \textit{variably-sized} splittings; both datasets consisted of $84,000$ elements.  The variably-sized dataset was evenly divided into the four mesh sizes: $15\times 15,\: 25\times 25,\: 35\times 35,\: 50\times 50$.  Each dataset was then split 85\%-15\% into training and testing subsets.  All neural networks were trained for 10 epochs each on an MSE loss, loss history for both datasets is displayed in Figure \ref{fig:conv_train_history}.  The recirculating flow CNN was trained and tested on the static dataset, while the two graph nets were trained on the variable dataset and evaluted on both datasets.
 
 Again, results show that networks are able to learn convergence values for the particular multigrid solver and recirculating-flow problem.  Graph nets and convolutional networks seem to have more-or-less the same predictive power, with the graph nets having the obvious upside of being cable of handling non-grid inputs.  Interestingly enough, the GCN network had slightly better performance than the MPNN on the static dataset.  The opposite was true for the variable dataset, perhaps indicating the MPNN was able to generalize more overall.
 
-\begin{table}[t]
-\centering
-\begin{tabular}{|l|l|l|l|}
-\hline
-Dataset & Model & Metric & Value \\
-\hline
-Static & CNN & MSE & $6.0332 \times 10^{-3}$ \\
-Static & CNN & L1 & $5.2335 \times 10^{-2}$ \\
-\hline
-Static & GCN & MSE & $6.7278 \times 10^{-3}$ \\
-Static & GCN & L1 & $5.5773 \times 10^{-2}$ \\
-\hline
-Static & MPNN & MSE & $8.4461 \times 10^{-3}$ \\
-Static & MPNN & L1 & $7.0079 \times 10^{-2}$ \\
-\hline
-Variable & GCN & MSE & $1.3079 \times 10^{-2}$ \\
-Variable & GCN & L1 & $8.4827 \times 10^{-2}$ \\
-\hline
-Variable & MPNN & MSE & $1.1495 \times 10^{-2}$ \\
-Variable & MPNN & L1 & $7.9967 \times 10^{-2}$ \\
-\hline
-\end{tabular}
-\caption{Final testing Mean Squared Error (MSE)/$L^1$-norm loss values for trained neural networks for the recirculating flow problem.  Lower values correspond to higher model accuracy.}
-\label{tab:conv_loss}
-\end{table}
+%% \begin{table}[t]
+%% \centering
+%% \begin{tabular}{|l|l|l|l|}
+%% \hline
+%% Dataset & Model & Metric & Value \\
+%% \hline
+%% Static & CNN & MSE & $6.0332 \times 10^{-3}$ \\
+%% Static & CNN & L1 & $5.2335 \times 10^{-2}$ \\
+%% \hline
+%% Static & GCN & MSE & $6.7278 \times 10^{-3}$ \\
+%% Static & GCN & L1 & $5.5773 \times 10^{-2}$ \\
+%% \hline
+%% Static & MPNN & MSE & $8.4461 \times 10^{-3}$ \\
+%% Static & MPNN & L1 & $7.0079 \times 10^{-2}$ \\
+%% \hline
+%% Variable & GCN & MSE & $1.3079 \times 10^{-2}$ \\
+%% Variable & GCN & L1 & $8.4827 \times 10^{-2}$ \\
+%% \hline
+%% Variable & MPNN & MSE & $1.1495 \times 10^{-2}$ \\
+%% Variable & MPNN & L1 & $7.9967 \times 10^{-2}$ \\
+%% \hline
+%% \end{tabular}
+%% \caption{Final testing Mean Squared Error (MSE)/$L^1$-norm loss values for trained neural networks for the recirculating flow problem.  Lower values correspond to higher model accuracy.}
+%% \label{tab:conv_loss}
+%% \end{table}
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figs/static_mse.png}
+    \caption{Static dataset}
+    \label{subfig:conv_static_mse}
+  \end{subfigure}
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figs/variable_mse.png}
+    \caption{Variable dataset}
+    \label{subfig:conv_variable_mse}
+  \end{subfigure}
+  \caption{MSE loss history on (\ref{subfig:conv_static_mse}) static and (\ref{subfig:conv_variable_mse}) variable datasets.  Network types are differentiated between each other and lower values correspond with lower prediction error against the entire dataset.}
+  \label{fig:conv_train_history}
+\end{figure}
 
 Predicted convergence values by the CNN over the static dataset are displayed in Figure \ref{fig:cd_conv_pred}.  The subplots detail predicted convergence rates vs their true value for each C/F splitting.  Almost opposite to the phenomenon observed in the Poisson CNN (Figure \ref{fig:poisson_conv_pred}, the network predicts more poorly converging grids accurately.  This could perhaps be explained by the data more densely populated with the poor convergence grids, and has a distinct lack of optimal grids.
 
@@ -411,8 +429,9 @@ Convergence predictions by the ECC network over the variable-size dataset are gi
 
 \section{Discussion and Conclusions}\label{sec:conc}
 
-In this paper, a method for training convolutional and graph nets was presented to predict convergence of a two-level multigrid solver when given an input C/F mesh splitting.  Random mesh splittings were generated from a set of reference grids for two model problems, then evaluated in a solver to find a reference convergence rate.  Additionally for the Poisson problem, a CNN to predict optimal relaxation weight was trained.
+%% In this paper, a method for training convolutional and graph nets was presented to predict convergence of a two-level multigrid solver when given an input C/F mesh splitting.  Random mesh splittings were generated from a set of reference grids for two model problems, then evaluated in a solver to find a reference convergence rate.  Additionally for the Poisson problem, a CNN to predict optimal relaxation weight was trained.
 
+In this paper, a method for training convolutional and graph nets was presented to predict convergence of a two-level multigrid solver when given an input C/F mesh splitting.
 Results indicate that neural networks can indeed predict convergence for a multigrid solver.  Convolutional networks are effective at learning attributes on structured grid-like 1D or 2D meshes, and graph nets are able to generalize on variably-sized structured meshes.  The graph networks could be further developed and trained on more general classes of problems, instead of the specific convection-diffusion problem or the variable-coefficent Poisson equation.
 
 Future works could build on the networks trained here and explore their applications, using them for example to pick between different AMG aggregation methods to find the most optimal for a specific use case.  Another more ambitious future work could be to use the neural networks in an optimization method to obtain the most convergent or most work efficient C/F splitting for a problem.
