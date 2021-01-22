@@ -7,10 +7,11 @@
       primaryClass={cs.LG}
 }
 
-@book{numpde,
+@unpublished{numpde,
       title={Numerical Partial Differential Equations},
       year={2020},
-      author={James Adler and Hans De Sterck and Scott MacLachlan and Luke Olson}
+      author={James Adler and Hans De Sterck and Scott MacLachlan and Luke Olson},
+      note={Draft}
 }
 
 @misc{ecc,
@@ -36,4 +37,148 @@
       author={Howard Elman and David Silvester and Andy Wathen},
       year={2014},
       publisher={Oxford University Press}
+}
+
+@misc{pyamg,
+      author = {L. N. Olson and J. B. Schroder},
+      title = {PyAMG: Algebraic Multigrid Solvers in Python v4.0},
+      year = {2018},
+      url = "https://github.com/pyamg/pyamg",
+      note = "Release 4.0"
+}
+
+@book{mgtut,
+      author={William L. Briggs and Van Emden Henson and Steve F. McCormick},
+      title = {A Multigrid Tutorial},
+      year = {2000},
+      publisher={SIAM}
+}
+
+@inbook{rs,
+author={J.W. Ruge and K. Steuben},
+title={Multigrid Methods},
+chapter={4. Algebraic Multigrid},
+publisher={SIAM},
+year={1987}
+}
+
+@misc{huang2018densely,
+      title={Densely Connected Convolutional Networks},
+      author={Gao Huang and Zhuang Liu and Laurens van der Maaten and Kilian Q. Weinberger},
+      year={2018},
+      eprint={1608.06993},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
+@misc{he2015deep,
+      title={Deep Residual Learning for Image Recognition},
+      author={Kaiming He and Xiangyu Zhang and Shaoqing Ren and Jian Sun},
+      year={2015},
+      eprint={1512.03385},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV}
+}
+
+% Firedrake
+@TechReport{petsc-user-ref,
+  Author = {Satish Balay and Shrirang Abhyankar and Mark F. Adams and Jed Brown
+            and Peter Brune and Kris Buschelman and Lisandro Dalcin and
+            Victor Eijkhout and William D. Gropp and Dmitry Karpeyev and
+            Dinesh Kaushik and Matthew G. Knepley and Dave A. May and Lois Curfman McInnes
+            and Richard Tran Mills and Todd Munson and Karl Rupp and Patrick Sanan
+            and Barry F. Smith and Stefano Zampini and Hong Zhang and Hong Zhang},
+  Title = {{PETS}c Users Manual},
+  Number = {ANL-95/11 - Revision 3.11},
+  Institution = {Argonne National Laboratory},
+  Year = {2019}
+}
+@InProceedings{petsc-efficient,
+  Author = {Satish Balay and William D. Gropp and Lois Curfman McInnes and Barry F. Smith},
+  Title = {Efficient Management of Parallelism in Object Oriented Numerical Software Libraries},
+  Booktitle = {Modern Software Tools in Scientific Computing},
+  Editor = {E. Arge and A. M. Bruaset and H. P. Langtangen},
+  Pages = {163--202},
+  Publisher = {Birkh{\"{a}}user Press},
+  Year = {1997}
+}
+@Article{Dalcin2011,
+  Author = {Lisandro D. Dalcin and Rodrigo R. Paz and Pablo A. Kler and Alejandro Cosimo},
+  Title = {Parallel distributed computing using {P}ython},
+  Journal = {Advances in Water Resources},
+  Note = {New Computational Methods and Software Tools},
+  Volume = {34},
+  Number = {9},
+  Pages = {1124--1139},
+  Year = {2011},
+  DOI = {http://dx.doi.org/10.1016/j.advwatres.2011.04.013}
+}
+@Article{Rathgeber2016,
+  author =       {Florian Rathgeber and David A. Ham and Lawrence
+                  Mitchell and Michael Lange and Fabio Luporini and
+                  Andrew T. T. McRae and Gheorghe-Teodor Bercea and
+                  Graham R. Markall and Paul H. J. Kelly},
+  title =        {Firedrake: automating the finite element method by
+                  composing abstractions},
+  journal =      {ACM Trans. Math. Softw.},
+  year =         2016,
+  volume =       {43},
+  number =       {3},
+  year =         {2016},
+  issn =         {0098-3500},
+  pages =        {24:1--24:27},
+  doi =          {10.1145/2998441},
+  archiveprefix ={arXiv},
+  eprint =       {1501.01809},
+  url =          {http://arxiv.org/abs/1501.01809}
+}
+@Article{Homolya2016,
+  author =       {Mikl'os Homolya and David A. Ham},
+  title =        {A parallel edge orientation algorithm for
+                  quadrilateral meshes},
+  journal =      {SIAM Journal on Scientific Computing},
+  year =         2016,
+  volume =       38,
+  number =       5,
+  pages =        {S48--S61},
+  doi =          {10.1137/15M1021325},
+  archiveprefix ={arXiv},
+  eprint =       {1505.03357},
+  primaryclass = {cs.MS},
+  url =          {http://arxiv.org/abs/1505.03357}
+}
+@Article{McRae2016,
+  author =       {Andrew T. T. McRae and Gheorghe-Teodor Bercea and
+                  Lawrence Mitchell and David A. Ham and Colin
+                  J. Cotter},
+  title =        {Automated generation and symbolic manipulation of
+                  tensor product finite elements},
+  journal =      {SIAM Journal on Scientific Computing},
+  year =         2016,
+  volume =       38,
+  number =       5,
+  pages =        {S25--S47},
+  doi =          {10.1137/15M1021167},
+  archiveprefix ={arXiv},
+  eprint =       {1411.2940},
+  primaryclass = {math.NA},
+  url =          {http://arxiv.org/abs/1411.2940}
+}
+@article{MUMPS01,
+  author = {P.~R. Amestoy and I.~S. Duff and J.-Y. L'Excellent and J. Koster},
+  title = {A fully asynchronous multifrontal solver using distributed dynamic scheduling},
+  journal = {SIAM Journal on Matrix Analysis and Applications},
+  volume = {23},
+  number = {1},
+  pages = {15--41},
+  year = {2001}
+}
+@article{MUMPS02,
+  author = {P.~R. Amestoy and A. Guermouche and J.-Y. L'Excellent and S. Pralet},
+  title = {Hybrid scheduling for the parallel solution of linear systems},
+  journal = {Parallel Computing},
+  volume = {32},
+  number = {2},
+  pages = {136--156},
+  year = {2006}
 }
