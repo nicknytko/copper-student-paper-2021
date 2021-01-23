@@ -116,11 +116,11 @@ In collaboration with:
 
 \section{Introduction}\label{sec:intro}
 
-Multigrid methods are some of the most widely used linear solvers for sparse systems, particularly ones that arise from the discretization of partial differential equations.  By ``downsampling'' the original problem to a series of smaller and smaller problems, fast convergence can be obtained with minimal work\cite{mgtut}.  Optimal ``downsampling'' is critical to the success of the method; classical Algebraic Multigrid (AMG) techniques attempt to create an interpolation operator by exploiting the structure of the original system\cite{rs}.  However, these methods often require careful parameter tweaking to obtain a sensible operator and C/F splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
+Multigrid methods are some of the most widely used linear solvers for sparse systems, particularly ones that arise from the discretization of partial differential equations.  By ``downsampling'' the original problem to a series of smaller and smaller problems, fast convergence can be obtained with minimal work~\cite{mgtut}.  Optimal ``downsampling'' is critical to the success of the method; classical Algebraic Multigrid (AMG) techniques attempt to create an interpolation operator by exploiting the structure of the original system~\cite{rs}.  However, these methods often require careful parameter tweaking to obtain a sensible operator and C/F splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
 
 %% The question becomes, what is the optimal way to downsample each problem and obtain a splitting of coarse/fine points?  Classical Algebraic Multigrid (AMG) techniques attempt to answer this by exploiting the structure of the original system to create a set of interpolation operators\cite{rs}.  However, these methods often require careful parameter tweaking to obtain sensible splittings and often the best way to test the parameter space is to actually run the multigrid iterations.
 
-In this paper, the following research question is addressed: can convergence rates of multigrid solvers be learned, and are neural networks an effective way of learning this attribute on the solver?  The ability to predict this would aid in the use and study of classical AMG methods by allowing users to estimate efficacy ahead of time.  We address this question by introducing a method of generating data and training neural networks to predict convergence rates for a specific PDE or class of equations.  Two problems are discussed here: $(1)$ a 1D variable coefficient Poisson equation, and $(2)$ a 2D recirculating flow convection-diffusion problem with specific parameters.  Sections \ref{subsec:methods_poisson} and \ref{subsec:methods_conv} describe how these random grid splittings are generated for the two problems and evaluated in a multigrid solver.
+In this paper, the following research question is addressed: can convergence rates of multigrid solvers be learned, and are neural networks an effective way of learning this attribute on the solver?  The ability to predict this would aid in the use and study of classical AMG methods by allowing users to estimate efficacy ahead of time: for example being used to differentiate between different or the most optimal AMG methods for a specific problem. We address this question by introducing a method of generating data and training neural networks to predict convergence rates for a specific PDE or class of equations.  Two problems are discussed here: $(1)$ a 1D variable coefficient Poisson equation, and $(2)$ a 2D recirculating flow convection-diffusion problem with specific parameters.  Sections \ref{subsec:methods_poisson} and \ref{subsec:methods_conv} describe how these random grid splittings are generated for the two problems and evaluated in a multigrid solver.
 
 For the 1D poisson case, convolutional neural networks (CNNs) are trained to predict the convergence rate and optimal relaxation weight (Section \ref{subsec:poisson_cnn}).  For the 2D convection-diffusion problem, a CNN was first trained to predict convergence (Section \ref{subsec:conv_cnn}), and then two different graph nets were trained to extrapolate to differently sized inputs and non-grid meshes (Sections \ref{subsec:conv_gcn}, \ref{subsec:conv_mpnn}).  Numerical results consisting of the network error performance and sample predictions are shown in Section \ref{sec:num}.  Finally, further discussion and possible directions of future work are given in Section \ref{sec:conc}.
 
@@ -140,7 +140,7 @@ Formally, the problem being solved is the Poisson equation in one dimension with
   -\grad \cdot \left(k\left(\vec{x}\right) \grad\vec{u}\right) = f,
 \end{equation}
 %
-with the right-hand side $f\left(\vec{x}\right)=\vec{x}$ being arbitrarily chosen.  Eqn.~\eqref{eqn:poisson} is discretized using finite differences on a grid of $N=31$ internal points on the domain $\Omega = \left[-1, 1\right]$ and Dirichlet boundary conditions, $\partial\Omega = 0$.  To preserve the symmetric, positive definite properties of the resulting linear system, the $k\left(\vec{x}\right)$ function is discretized on the grid \textit{midpoints}\cite{numpde}.
+with the right-hand side $f\left(\vec{x}\right)$ being arbitrarily chosen.  Eqn.~\eqref{eqn:poisson} is discretized using finite differences on a grid of $N=31$ internal points on the domain $\Omega = \left[-1, 1\right]$ and Dirichlet boundary conditions, $\partial\Omega = 0$.  To preserve the symmetric, positive definite properties of the resulting linear system, the $k\left(\vec{x}\right)$ function is discretized on the grid \textit{midpoints}~\cite{numpde}.
 
 Before the neural network can be trained, a dataset of approximately 300,000 random C/F grid splittings and their computed convergence rate and optimal relaxation weight was generated.  A set of $6$ reference grids were first created according to various ``coarsening'' factors:
 %
@@ -148,21 +148,21 @@ Before the neural network can be trained, a dataset of approximately 300,000 ran
   r = \begin{Bmatrix} 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9\end{Bmatrix}.
 \end{equation}
 %
-Each of the values in \ref{eqn:poisson_coarsening}, say $r_i = j$ refers to a grid in which each $j$th point is coarse, and the rest fine.  So, a coarsening by $3$ is a grid that has roughly $\frac{1}{3}$ of its distribution of points as coarse and all others fine.  Each of these reference grids was randomly permuted such that each grid point had a random probability of being flipped to the opposite value -- coarse point to fine and fine point to coarse.  For each reference grid, approximately 1000 random trials of each following probability were run:
+Each of the values in \ref{eqn:poisson_coarsening}, say $r_i = j$ refers to a grid in which each $j$th point is coarse, and the rest fine.  So, a coarsening by $3$ is a grid that has roughly $\frac{1}{3}$ of its distribution of points as coarse and all others fine.  Each of these reference grids was randomly permuted such that each grid point had a random probability of being flipped to the opposite value: coarse point to fine and fine point to coarse.  For each reference grid, approximately 1000 random trials of each following probability were run:
 %
 \begin{equation} \label{eqn:poisson_probabilities}
   p = \begin{Bmatrix} 0.01 & 0.05 & 0.1 & 0.25 & 0.5 & 0.75 \end{Bmatrix}
 \end{equation}
 %
-Additionally, each trial was run with a randomly-chosen function for the variable coefficients $k\left(\vec{x}\right)$.  The function is randomly chosen from
+Additionally, each trial was run with a randomly-chosen function for the variable coefficients $k\left(\vec{x}\right)$.  The function is randomly chosen from one of four functional forms
 %
 \begin{equation} \label{eqn:poisson_varcoefficients}
 k\left(\vec{x}\right) = \begin{cases}
 \alpha & 0 < \alpha < 10 \\
 \text{rand()}\left(\alpha + 1\right) & 0 < \alpha < 10 \\
 \alpha\cos\left(\pi x \beta\right) + \gamma & 0 < \alpha < 10, 0 < \beta < 10, \alpha < \gamma < 10\\
-\abs{\sum_{i=1}^5 \alpha_i x^i} + 0.01 & -10 < \alpha < 10
-\end{cases},
+\abs{\sum_{i=1}^5 \alpha_i x^i} + 0.01 & -10 < \alpha < 10,
+\end{cases}
 \end{equation}
 %
 with coefficient values specifically picked to prevent the function from being non-positive at any value in $\Omega$.
@@ -181,7 +181,7 @@ Two separate deep convolutional networks with residual connections were trained 
 \item 8 Fully-connected layers to gradually reduce output to a scalar describing the convergence or relaxation weight.
 \end{enumerate}
 %
-Each layer is followed by an implicit ReLU nonlinear activation function.  Because the convolutional layers (except for the first) keep the input and output size static, we are able to push residual values and skip layers similarly to a ResNet\cite{huang2018densely,he2015deep}.  Even numbered layers $n$ take as input both the output of layers $n-1$ and $n-2$, while odd-numbered layers only use the output from layer $n-1$.
+Each layer is followed by an implicit ReLU nonlinear activation function.  Because the convolutional layers (except for the first) keep the input and output size static, we are able to push residual values and skip layers similarly to a ResNet~\cite{huang2018densely,he2015deep}.  Even numbered layers $n$ take as input both the output of layers $n-1$ and $n-2$, while odd-numbered layers only use the output from layer $n-1$.
 
 The C/F splitting is remapped such that a coarse point is given a value of $1$ and a fine point the value of $-1$.  The variable coefficients were also re-discretized to be defined on the nodal points instead of midpoints in order for the splitting and coefficients to be represented by vectors of same length.  These two were then stacked into a two-channel tensor for input into the CNN.  When training, input values (convergence rate and relaxation weight) are normalized to be within the range of $\left[0,1\right]$.  This normalization is undone when the output is displayed.
 
@@ -193,16 +193,16 @@ This specific problem models what is called the \textit{double glazing problem},
   -k\grad^2u + \vec{w}\cdot\grad u = f.
 \end{equation}
 %
-The wind velocity function, $\vec{w}\left(x,y\right)$ is defined as $\vec{w}\left(x,y\right)=\\ \begin{bmatrix} 2y\left(1-x^2\right) & 2x\left(1-y^2\right) \end{bmatrix}$.  The domain is a square of side length two centered at the origin, $\Omega = \left[-1,1\right] \times \left[-1,1\right]$.  Dirichlet boundary conditions are defined on $\partial \Omega$, with the one ``hot'' wall defined on $x=1$ with value $\partial \Omega_H=1$.  The other boundaries are ``cold'' walls with $\partial \Omega_c=0$.  A diffusivity constant of $k=0.1$ is used.  This problem is derived from an example by Elman, Silvester, and Wathen\cite{silvester}.
+The wind velocity function, $\vec{w}\left(x,y\right)$ is defined as $\vec{w}\left(x,y\right)=\\ \begin{bmatrix} 2y\left(1-x^2\right) & 2x\left(1-y^2\right) \end{bmatrix}$.  The domain is a square of side length two centered at the origin, $\Omega = \left[-1,1\right] \times \left[-1,1\right]$.  Dirichlet boundary conditions are defined on $\partial \Omega$, with the one ``hot'' wall defined on $x=1$ with value $\partial \Omega_H=1$.  The other boundaries are ``cold'' walls with $\partial \Omega_c=0$.  A diffusivity constant of $k=0.1$ is used.  This problem is derived from an example by Elman, Silvester, and Wathen~\cite{silvester}.
 
-This PDE is discretized using finite-elements on a structured grid of 25x25 internal points using the Firedrake software for FEM discretizations\cite{Dalcin2011, Rathgeber2016,Homolya2016,McRae2016,MUMPS01,MUMPS02}.  Using a grid as a basis for the discretization allows use of both CNN and more sophisticated graph convolutional techniques.
+This PDE is discretized using finite-elements on a structured grid of 25x25 internal points using the Firedrake software for FEM discretizations~\cite{Dalcin2011, Rathgeber2016,Homolya2016,McRae2016}.  Using a grid as a basis for the discretization allows use of both CNN and more sophisticated graph convolutional techniques.
 
 Generating a dataset of mesh splittings and convergence rates was done in an overall similar way to the 1D Poisson equation with a few notable differences.  Again, a set of reference C/F splittings were generated that are later permuted.  For the convection-diffusion case, the following reference splittings were used:
 
 \begin{enumerate}
 \item All fine points
 \item All coarse points
-\item Splitting as given by Ruge-St\"{u}ben AMG ($\theta=0.25$) \cite{rs, pyamg}
+\item Splitting as given by Ruge-St\"{u}ben AMG ($\theta=0.25$)~\cite{rs, pyamg}
 \item Coarsening in each direction by 2
 \item Coarsening in each direction by 3
 \item Coarsening in each direction by 4
@@ -215,7 +215,7 @@ The entries of each individual reference splitting were then randomly permuted a
   p = \begin{Bmatrix} 0.01 & 0.05 & 0.1 & 0.25 & 0.5 & 0.75 \end{Bmatrix}.
 \end{equation}
 %
-Generated splittings that are unsolveable (i.e., consist of no coarse points) were rejected and their trial re-run.  This generated set of C/F splittings was passed along to another 2 level V-cycle multigrid solver run for a maximum of 50 iterations.  The interpolation operator was formed by means of \textit{direct interpolation}, the implementation of which gratiously taken from the PyAMG\cite{pyamg} library.  This solver performs two rounds of Jacobi pre-and-post relaxation, with a coarse error correction between the relaxation steps.  The absolute error between the approximation at each iteration and the ``exact'' solution was computed and saved, with the full sequence used to find the average convergence rate.  Note the optimal Jacobi relaxation weight was not found here, as experimentation found that the optimal weight would nearly always be $1$.
+Generated splittings that are unsolveable (i.e., consist of no coarse points) were rejected and their trial re-run.  This generated set of C/F splittings was passed along to another 2 level V-cycle multigrid solver run for a maximum of 50 iterations.  The interpolation operator was formed by means of \textit{direct interpolation}, the implementation of which gratiously taken from the PyAMG~\cite{pyamg} library.  This solver performs two rounds of Jacobi pre-and-post relaxation, with a coarse error correction between the relaxation steps.  The absolute error between the approximation at each iteration and the ``exact'' solution was computed and saved, with the full sequence used to find the average convergence rate.  Note the optimal Jacobi relaxation weight was not found here, as experimentation found that the optimal weight would nearly always be $1$.
 
 The convection-diffusion problem was additionally re-discretized at 4 different mesh sizes: $15\times 15,\enskip 25\times 25,\enskip 35\times 35,\enskip 50\times 50$.  The above process was re-run for each mesh size to generate a new dataset for use in the graph nets.  To distinguish between the two datasets, they will hereby be referred to as the \textit{statically-sized} (only containing $25 \times 25$ mesh and splittings) and the \textit{variably-sized} datasets.
 
@@ -231,11 +231,11 @@ A 2D convolutional network was trained on the statically-sized dataset to predic
 \item 1 Fully-connected layer to reduce output to a scalar predicting convergence rate.
 \end{enumerate}
 %
-Each layer is followed by a ReLU nonlinear activation function.  Odd layers are fed the output of the previous two layers, while even layers are fed the input of only the previous layer, similarly to a ResNet\cite{huang2018densely,he2015deep}.  C/F splittings are mapped so that coarse points have value $1$ and fine points have value $-1$.  The CNN thus has a $25\times 25=625$-length vector as input.  Interestingly, normalization of the convergence rates is unneeded as the minimum and maximum recorded values are already close to $0$ and $1$, respectively.
+Each layer is followed by a ReLU nonlinear activation function.  Odd layers are fed the output of the previous two layers, while even layers are fed the input of only the previous layer, similarly to a ResNet~\cite{huang2018densely,he2015deep}.  C/F splittings are mapped so that coarse points have value $1$ and fine points have value $-1$.  The CNN thus has a $25\times 25=625$-length vector as input.  Interestingly, normalization of the convergence rates is unneeded as the minimum and maximum recorded values are already close to $0$ and $1$, respectively.
 
 \subsection{Convection-Diffusion Graph Convolutional Network (GCN)}\label{subsec:conv_gcn}
 
-The main downside of using traditional convolutional layers is that they are useful only on structured, grid-like inputs.  Grid-based convolution is ineffective on the more complex meshes that may arise from finite-element discretizations.  By treating the input mesh as a graph and using graph-based convolution techniques, we may get around this roadblock.  The first graphnet that was tried uses the GCN layer introduced by Kipf and Welling\cite{gcn} and is described here, the other uses an Edge-Conditioned Convolution (ECC)/message passing layer and is described in Section \ref{subsec:conv_mpnn}.
+The main downside of using traditional convolutional layers is that they are useful only on structured, grid-like inputs.  Grid-based convolution is ineffective on the more complex meshes that may arise from finite-element discretizations.  By treating the input mesh as a graph and using graph-based convolution techniques, we may get around this roadblock.  The first graphnet that was tried uses the GCN layer introduced by Kipf and Welling~\cite{gcn} and is described here, the other uses an Edge-Conditioned Convolution (ECC)/message passing layer and is described in Section \ref{subsec:conv_mpnn}.
 
 For the graphnets, the sparse FEM system was re-interpreted as a graph by assigning each row/column to be a node and defining connectivity between nodes as nonzero matrix entries.  Edge weights were taken to be the entry values themselves, although normalized to be within the range of $[0, 1]$.   This network was trained on the variably-sized dataset; as will be seen, the lack of any fully-connected layers allows for any arbitrary input.
 
@@ -267,7 +267,7 @@ y &= \sum_{j=1}^n \sigma\left( \sigma\left(\mat{r}_j\mat{W}^{(5)} + \vec{b}^{(5)
 Note that the matrix $\mat{R}$ is formed whose columns are the propagation history of each node; this is an attempt to emulate traditional ResNet architectures.  The final scalar output is computed by summing each column of $\mat{R}$ through a two layer fully-connected neural network, with the first layer taking as input 9 features and outputting 5 features, and the second layer taking as input 5 features and outputting 1 feature.  This local transformation of each nodal value following by a global averaging removes any dependency for a fixed input size -- instead any sized graph and splitting could (in theory) be used.
 
 \subsection{Convection-Diffusion Message Passing Network (MPNN)}\label{subsec:conv_mpnn}
-A downside of the GCN layer, while being simple to implement and understand, is that it does not effectively learn edge features between nodes and thus is only an approximation of a convolution on a graph.  The Edge-Conditioned Convolution (ECC) layer, as defined by Simonovsky and Komodakis\cite{ecc}, attempts to combat this by learning optimal edge weights given an arbitrary node-edge neighborhood.  This approach is also referred to as a ``message-passing network'', as each connected neighbor attempts to learn a ``message'' that is passed to the original node\cite{mpnn}.  The convolution operation is defined as
+A downside of the GCN layer, while being simple to implement and understand, is that it does not effectively learn edge features between nodes and thus is only an approximation of a convolution on a graph.  The Edge-Conditioned Convolution (ECC) layer, as defined by Simonovsky and Komodakis~\cite{ecc}, attempts to combat this by learning optimal edge weights given an arbitrary node-edge neighborhood.  This approach is also referred to as a ``message-passing network'', as each connected neighbor attempts to learn a ``message'' that is passed to the original node~\cite{mpnn}.  The convolution operation is defined as
 %
 \begin{equation}\label{eqn:mpnn_prop}
   \left(\mat{H}^{(i)}\right)_j = \frac{1}{\abs{\mathcal{N}\left(j\right)}} \sum_{k\in\mathcal{N}\left(j\right)} F^{(i)}\left(e_{j,k}\right)\left(\mat{H}^{(i-1)}\right)_k + \vec{b}^{(i)}
@@ -345,9 +345,9 @@ Predictions for relaxation weights on both training and testing subsets are show
 
 \subsection{2D Convection-Diffusion}
 
-Two datasets were created for the 2D recirculating flow problem: a set of \textit{statically-sized} C/F splittings and a set of \textit{variably-sized} splittings; both datasets consisted of $84,000$ elements.  The variably-sized dataset was evenly divided into the four mesh sizes: $15\times 15,\: 25\times 25,\: 35\times 35,\: 50\times 50$.  Each dataset was then split 85\%-15\% into training and testing subsets.  All neural networks were trained for 10 epochs each on an MSE loss, loss history for both datasets is displayed in Figure \ref{fig:conv_train_history}.  The recirculating flow CNN was trained and tested on the static dataset, while the two graph nets were trained on the variable dataset and evaluted on both datasets.
+Two datasets were created for the 2D recirculating flow problem: a set of \textit{statically-sized} C/F splittings and a set of \textit{variably-sized} splittings; both datasets consisted of 84\,000 elements.  The variably-sized dataset was evenly divided into the four mesh sizes: $15\times 15,\: 25\times 25,\: 35\times 35,\: 50\times 50$.  Each dataset was then split 85\%-15\% into training and testing subsets.  All neural networks were trained for 10 epochs each on an MSE loss, loss history for both datasets is displayed in Figure \ref{fig:conv_train_history}.  The recirculating flow CNN was trained and tested on the static dataset, while the two graph nets were trained on the variable dataset and evaluted on both datasets.
 
-Again, results show that networks are able to learn convergence values for the particular multigrid solver and recirculating-flow problem.  Graph nets and convolutional networks seem to have more-or-less the same predictive power, with the graph nets having the obvious upside of being cable of handling non-grid inputs.  Almost expectedly, the message-passing network (ECC) was able to more effectively learn the problem space than the GCN network, likely due to it learning edge weightings as well.
+Again, results show that networks are able to learn convergence values for the particular multigrid solver and recirculating-flow problem.  Graph nets and convolutional networks seem to have more-or-less the same predictive power, with the graph nets having the obvious upside of being cable of handling non-rectangular grid inputs.  Almost expectedly, the message-passing network (ECC) was able to more effectively learn the problem space than the GCN network, likely due to it learning edge weightings as well.
 
 %% \begin{table}[t]
 %% \centering
