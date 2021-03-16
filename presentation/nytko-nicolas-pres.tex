@@ -1,0 +1,44 @@
+%%
+% Please see https://bitbucket.org/rivanvx/beamer/wiki/Home for obtaining beamer.
+%%
+\documentclass{beamer}
+%\usetheme{Warsaw}
+
+\usepackage{blkarray}
+\usepackage{bigstrut}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{harpoon}
+\usefonttheme[onlymath]{serif}
+
+\makeatletter
+\let\BA@quicktrue\BA@quickfalse
+\makeatother
+
+\renewcommand{\vec}[1]{ {\bf #1} }
+
+\title{A Supervised Learning Approach to Predicting Multigrid Convergence}
+\author[me]{Nicolas Nytko\\[3mm]Matthew West, Luke Olson, Scott MacLachlan}
+\date{\today}
+
+\begin{document}
+\frame{\titlepage}
+
+% Overview
+\begin{frame}
+  \frametitle{Overview}
+\end{frame}
+
+% Poisson intro
+\begin{frame}
+  \frametitle{Poisson Problem}
+  \begin{itemize}
+  \item Look at the 1D variable coefficients case w/ homogeneous Dirichlet conditions
+    \[ -\nabla \cdot \left(k\left(\vec{x}\right) \nabla \vec{y} \right) = f \]
+    \[ \Omega = \left[-1, 1\right] \quad \partial\Omega = 0 \]
+  \item Discretized on $N=31$ internal points using finite differences, $k\left(\vec{x}\right)$ is discretized on midpoints to preserve symmetry.
+  \item For arbitrary C/F splitting, can we predict convergence rate and optimal relaxation weight?
+  \end{itemize}
+\end{frame}
+
+\end{document}
