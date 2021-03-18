@@ -1,0 +1,1110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="430pt"
+   height="692pt"
+   viewBox="0 0 430 692"
+   version="1.1"
+   id="svg490"
+   sodipodi:docname="graph.svg"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
+   inkscape:export-filename="/home/nick/Git/copper-student-paper-2021/presentation/figures/graph.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96">
+  <metadata
+     id="metadata496">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs494" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1862"
+     inkscape:window-height="1156"
+     id="namedview492"
+     showgrid="false"
+     inkscape:zoom="0.77250394"
+     inkscape:cx="460.09934"
+     inkscape:cy="483.59911"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg490" />
+  <g
+     id="node2"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title16">1</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="193"
+       cy="-666"
+       rx="27"
+       ry="18"
+       id="ellipse18" />
+    <text
+       text-anchor="middle"
+       x="193"
+       y="-662.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text20">1</text>
+  </g>
+  <g
+     id="edge2"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title23">1--1</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 212.9,-678.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path25" />
+  </g>
+  <g
+     id="node3"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title28">4</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="120"
+       cy="-594"
+       rx="27"
+       ry="18"
+       id="ellipse30" />
+    <text
+       text-anchor="middle"
+       x="120"
+       y="-590.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text32">4</text>
+  </g>
+  <g
+     id="edge3"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title35">1--4</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 178.23,-650.83 c -12.67,12.14 -30.82,29.55 -43.48,41.69"
+       id="path37" />
+  </g>
+  <g
+     id="node4"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title40">5</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="257"
+       cy="-594"
+       rx="27"
+       ry="18"
+       id="ellipse42" />
+    <text
+       text-anchor="middle"
+       x="257"
+       y="-590.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text44">5</text>
+  </g>
+  <g
+     id="edge4"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title47">1--5</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 206.57,-650.15 c 10.86,11.87 26.02,28.45 36.88,40.33"
+       id="path49" />
+  </g>
+  <g
+     id="node5"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title52">6</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="193"
+       cy="-522"
+       rx="27"
+       ry="18"
+       id="ellipse54" />
+    <text
+       text-anchor="middle"
+       x="193"
+       y="-518.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text56">6</text>
+  </g>
+  <g
+     id="edge5"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title59">1--6</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 193,-647.87 c 0,27.29 0,80.35 0,107.68"
+       id="path61" />
+  </g>
+  <g
+     id="edge6"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title64">4--4</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 139.9,-606.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path66" />
+  </g>
+  <g
+     id="edge7"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title69">4--6</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 134.77,-578.83 c 12.67,12.14 30.82,29.55 43.48,41.69"
+       id="path71" />
+  </g>
+  <g
+     id="node6"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title74">11</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="120"
+       cy="-450"
+       rx="27"
+       ry="18"
+       id="ellipse76" />
+    <text
+       text-anchor="middle"
+       x="120"
+       y="-446.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text78">11</text>
+  </g>
+  <g
+     id="edge8"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title81">4--11</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 120,-575.87 c 0,27.29 0,80.35 0,107.68"
+       id="path83" />
+  </g>
+  <g
+     id="node7"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title86">12</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="27"
+       cy="-306"
+       rx="27"
+       ry="18"
+       id="ellipse88" />
+    <text
+       text-anchor="middle"
+       x="27"
+       y="-302.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text90">12</text>
+  </g>
+  <g
+     id="edge9"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title93">4--12</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="M 114.46,-575.97 C 97.92,-525.1 49.01,-374.7 32.51,-323.94"
+       id="path95" />
+  </g>
+  <g
+     id="edge10"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title98">5--5</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 276.9,-606.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path100" />
+  </g>
+  <g
+     id="edge11"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title103">5--6</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 243.43,-578.15 c -10.86,11.87 -26.02,28.45 -36.88,40.33"
+       id="path105" />
+  </g>
+  <g
+     id="node8"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title108">8</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="266"
+       cy="-450"
+       rx="27"
+       ry="18"
+       id="ellipse110" />
+    <text
+       text-anchor="middle"
+       x="266"
+       y="-446.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text112">8</text>
+  </g>
+  <g
+     id="edge12"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title115">5--8</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 258.09,-575.87 c 1.73,27.29 5.09,80.35 6.82,107.68"
+       id="path117" />
+  </g>
+  <g
+     id="node9"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title120">9</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="359"
+       cy="-378"
+       rx="27"
+       ry="18"
+       id="ellipse122" />
+    <text
+       text-anchor="middle"
+       x="359"
+       y="-374.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text124">9</text>
+  </g>
+  <g
+     id="edge13"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title127">5--9</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 265.64,-576.56 c 12.41,23.77 35.83,69.2 54.36,108.56 11.78,25.03 24.47,54.52 32.07,72.48"
+       id="path129" />
+  </g>
+  <g
+     id="edge14"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title132">6--6</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 212.9,-534.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path134" />
+  </g>
+  <g
+     id="edge15"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title137">6--11</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 178.23,-506.83 c -12.67,12.14 -30.82,29.55 -43.48,41.69"
+       id="path139" />
+  </g>
+  <g
+     id="edge16"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title142">6--8</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 207.77,-506.83 c 12.67,12.14 30.82,29.55 43.48,41.69"
+       id="path144" />
+  </g>
+  <g
+     id="node10"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title147">14</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="193"
+       cy="-378"
+       rx="27"
+       ry="18"
+       id="ellipse149" />
+    <text
+       text-anchor="middle"
+       x="193"
+       y="-374.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text151">14</text>
+  </g>
+  <g
+     id="edge17"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title154">6--14</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 193,-503.87 c 0,27.29 0,80.35 0,107.68"
+       id="path156" />
+  </g>
+  <g
+     id="edge18"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title159">11--11</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 139.9,-462.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path161" />
+  </g>
+  <g
+     id="edge19"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title164">11--12</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 109.69,-433.26 c -17.87,27.29 -54.43,83.11 -72.34,110.45"
+       id="path166" />
+  </g>
+  <g
+     id="edge20"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title169">11--14</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 134.77,-434.83 c 12.67,12.14 30.82,29.55 43.48,41.69"
+       id="path171" />
+  </g>
+  <g
+     id="node11"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title174">21</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="155"
+       cy="-306"
+       rx="27"
+       ry="18"
+       id="ellipse176" />
+    <text
+       text-anchor="middle"
+       x="155"
+       y="-302.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text178">21</text>
+  </g>
+  <g
+     id="edge21"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title181">11--21</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 124.15,-432.15 c 6.74,27.33 19.97,81.01 26.7,108.33"
+       id="path183" />
+  </g>
+  <g
+     id="node12"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title186">22</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="91"
+       cy="-234"
+       rx="27"
+       ry="18"
+       id="ellipse188" />
+    <text
+       text-anchor="middle"
+       x="91"
+       y="-230.3"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text190">22</text>
+  </g>
+  <g
+     id="edge22"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title193">11--22</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 117.68,-431.85 c -5.45,40.17 -18.97,139.96 -24.38,179.91"
+       id="path195" />
+  </g>
+  <g
+     id="edge23"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title198">12--12</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 46.9,-318.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path200" />
+  </g>
+  <g
+     id="edge24"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title203">12--22</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 40.57,-290.15 c 10.86,11.87 26.02,28.45 36.88,40.33"
+       id="path205" />
+  </g>
+  <g
+     id="node13"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title208">23</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="64"
+       cy="-162"
+       rx="27"
+       ry="18"
+       id="ellipse210" />
+    <text
+       text-anchor="middle"
+       x="64"
+       y="-158.3"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text212">23</text>
+  </g>
+  <g
+     id="edge25"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title215">12--23</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 31.39,-288.15 c 7.12,27.33 21.11,81.01 28.23,108.33"
+       id="path217" />
+  </g>
+  <g
+     id="edge26"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title220">8--8</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 285.9,-462.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path222" />
+  </g>
+  <g
+     id="edge27"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title225">8--9</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 283.49,-435.83 c 16.63,12.51 41.49,31.23 58.1,43.72"
+       id="path227" />
+  </g>
+  <g
+     id="edge28"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title230">8--14</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 251.23,-434.83 c -12.67,12.14 -30.82,29.55 -43.48,41.69"
+       id="path232" />
+  </g>
+  <g
+     id="node14"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title235">13</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="330"
+       cy="-306"
+       rx="27"
+       ry="18"
+       id="ellipse237" />
+    <text
+       text-anchor="middle"
+       x="330"
+       y="-302.29999"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text239">13</text>
+  </g>
+  <g
+     id="edge29"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title242">8--13</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 273.47,-432.43 c 12.33,27.36 36.81,81.68 49.11,108.97"
+       id="path244" />
+  </g>
+  <g
+     id="node15"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title247">15</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="228"
+       cy="-234"
+       rx="27"
+       ry="18"
+       id="ellipse249" />
+    <text
+       text-anchor="middle"
+       x="228"
+       y="-230.3"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text251">15</text>
+  </g>
+  <g
+     id="edge30"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title254">8--15</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 262.95,-431.85 c -7.13,40.17 -24.85,139.96 -31.94,179.91"
+       id="path256" />
+  </g>
+  <g
+     id="edge31"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title259">9--9</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 378.9,-390.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path261" />
+  </g>
+  <g
+     id="edge32"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title264">9--13</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 352.13,-360.41 c -4.63,11.16 -10.69,25.81 -15.31,36.94"
+       id="path266" />
+  </g>
+  <g
+     id="node16"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title269">19</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="377"
+       cy="-18"
+       rx="27"
+       ry="18"
+       id="ellipse271" />
+    <text
+       text-anchor="middle"
+       x="377"
+       y="-14.3"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text273">19</text>
+  </g>
+  <g
+     id="edge33"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title276">9--19</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 369.8,-361.19 c 16.27,25.4 45.2,77.43 45.2,126.19 0,0 0,0 0,74 0,46.7 -19.42,99.2 -30.49,125.34"
+       id="path278" />
+  </g>
+  <g
+     id="edge34"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title281">14--14</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 212.9,-390.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path283" />
+  </g>
+  <g
+     id="edge35"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title286">14--21</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 184.19,-360.76 c -6.14,11.3 -14.3,26.32 -20.42,37.61"
+       id="path288" />
+  </g>
+  <g
+     id="edge36"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title291">14--15</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 198.55,-359.92 c 3.26,10.34 7.34,23.82 10.45,35.92 6.38,24.79 12.29,53.84 15.78,71.84"
+       id="path293" />
+  </g>
+  <g
+     id="edge39"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title296">21--21</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 174.9,-318.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path298" />
+  </g>
+  <g
+     id="edge40"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title301">21--22</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 141.43,-290.15 c -10.86,11.87 -26.02,28.45 -36.88,40.33"
+       id="path303" />
+  </g>
+  <g
+     id="edge41"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title306">22--22</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 110.9,-246.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path308" />
+  </g>
+  <g
+     id="edge42"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title311">22--23</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 84.6,-216.41 c -4.24,11 -9.79,25.38 -14.06,36.45"
+       id="path313" />
+  </g>
+  <g
+     id="edge43"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title316">23--23</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 83.89,-174.43 c 12.8,-3.25 25.11,0.9 25.11,12.43 0,11.53 -12.31,15.68 -25.11,12.43"
+       id="path318" />
+  </g>
+  <g
+     id="edge44"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title321">13--13</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 349.9,-318.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path323" />
+  </g>
+  <g
+     id="edge45"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title326">13--15</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 311.76,-292.49 c -18.56,12.75 -47.17,32.38 -65.68,45.08"
+       id="path328" />
+  </g>
+  <g
+     id="edge46"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title331">13--19</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 332.8,-287.97 c 8.36,50.87 33.08,201.27 41.42,252.02"
+       id="path333" />
+  </g>
+  <g
+     id="node19"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title336">17</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="258"
+       cy="-162"
+       rx="27"
+       ry="18"
+       id="ellipse338" />
+    <text
+       text-anchor="middle"
+       x="258"
+       y="-158.3"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text340">17</text>
+  </g>
+  <g
+     id="edge47"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title343">13--17</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 321.74,-288.71 c -13.81,27.24 -41.46,81.76 -55.36,109.17"
+       id="path345" />
+  </g>
+  <g
+     id="node20"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title348">18</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="304"
+       cy="-90"
+       rx="27"
+       ry="18"
+       id="ellipse350" />
+    <text
+       text-anchor="middle"
+       x="304"
+       y="-86.300003"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text352">18</text>
+  </g>
+  <g
+     id="edge48"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title355">13--18</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 328.27,-287.58 c -2.97,29.56 -9.42,91.43 -16.27,143.58 -1.58,11.99 -3.61,25.47 -5.24,35.84"
+       id="path357" />
+  </g>
+  <g
+     id="edge49"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title360">15--15</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 247.9,-246.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path362" />
+  </g>
+  <g
+     id="edge50"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title365">15--17</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 235.11,-216.41 c 4.78,11.16 11.06,25.81 15.83,36.94"
+       id="path367" />
+  </g>
+  <g
+     id="edge51"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title370">19--19</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 396.9,-30.43 c 12.79,-3.24 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path372" />
+  </g>
+  <g
+     id="edge53"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title399">17--17</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 277.9,-174.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path401" />
+  </g>
+  <g
+     id="edge54"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title404">17--18</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 268.44,-145.12 c 7.53,11.46 17.64,26.86 25.16,38.3"
+       id="path406" />
+  </g>
+  <g
+     id="node22"
+     class="node"
+     transform="translate(4,688)">
+    <title
+       id="title409">24</title>
+    <ellipse
+       fill="none"
+       stroke="#000000"
+       cx="268"
+       cy="-18"
+       rx="27"
+       ry="18"
+       id="ellipse411" />
+    <text
+       text-anchor="middle"
+       x="268"
+       y="-14.3"
+       font-family="Times, serif"
+       font-size="14px"
+       id="text413">24</text>
+  </g>
+  <g
+     id="edge55"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title416">17--24</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 259.21,-143.87 c 1.92,27.29 5.65,80.35 7.58,107.68"
+       id="path418" />
+  </g>
+  <g
+     id="edge56"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title421">18--19</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 318.77,-74.83 c 12.67,12.14 30.82,29.55 43.48,41.69"
+       id="path423" />
+  </g>
+  <g
+     id="edge57"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title426">18--18</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 323.9,-102.43 c 12.79,-3.25 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.67 -25.1,12.43"
+       id="path428" />
+  </g>
+  <g
+     id="edge58"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title431">18--24</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 295.65,-72.77 c -5.82,11.31 -13.54,26.33 -19.35,37.62"
+       id="path433" />
+  </g>
+  <g
+     id="edge60"
+     class="edge"
+     transform="translate(4,688)">
+    <title
+       id="title448">24--24</title>
+    <path
+       fill="none"
+       stroke="#000000"
+       d="m 287.9,-30.43 c 12.79,-3.24 25.1,0.9 25.1,12.43 0,11.53 -12.31,15.68 -25.1,12.43"
+       id="path450" />
+  </g>
+</svg>
