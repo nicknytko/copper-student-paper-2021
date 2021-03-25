@@ -11,6 +11,9 @@
 \usepackage{harpoon}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage[square,numbers]{natbib}
+\usepackage{soul}
+\setcitestyle{numbers}
 \usefonttheme[onlymath]{serif}
 
 \makeatletter
@@ -32,7 +35,16 @@
 % Overview
 \begin{frame}
   \frametitle{Introduction}
-  todo: insert introduction
+  \begin{itemize}
+  \item AMG methods are among fastest today for solving sparse linear systems
+  \item Optimal setup for AMG can be difficult, and incorrect parameters could prevent convergence.
+    \begin{itemize}
+      \item Put careful thought into the problem and selecting relaxation weights, AMG parameters
+      \item \st{Just try different values and see what works}
+    \end{itemize}
+  \item For a specific AMG setup, can we predict efficacy ahead of time?
+  \item Look at predicting rate of convergence for specific Poisson, Convection-Diffusion problems.
+  \end{itemize}
 \end{frame}
 
 
@@ -68,41 +80,41 @@
   \frametitle{Dataset Generation}
   \begin{itemize}
   \item Start from ``reference'' splittings, which are evenly spaced coarse points on a grid.
-  \item Randomly perturb each reference in several trials, according to \[ p = \left\{ 0.01 \quad 0.05 \quad 0.1 \quad 0.25 \quad 0.5 \quad 0.75 \right\}. \]
-  \item Generate variable coefficients such that \[ k\left(\vec{x}\right) = \begin{cases}
-\alpha \\
-\text{rand()}\left(\alpha + 1\right) \\
-\alpha\cos\left(\pi x \beta\right) + \gamma \\
-\abs{\sum_{i=1}^5 \alpha_i x^i} + 0.01
-\end{cases}. \]
+  \item Randomly perturb each reference in several trials, each point has a set probability of being flipped to opposite value (i.e., coarse to fine and fine to coarse).
+  \item Generate variable coefficients according to a few random functions, i.e. cosine wave, random polynomial, noise.
   \end{itemize}
+  \begin{figure}[h]
+  \centering
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figures/grid1.png}
+    \includegraphics[width=\textwidth]{figures/grid2.png}
+    \includegraphics[width=\textwidth]{figures/grid3.png}
+    \includegraphics[width=\textwidth]{figures/grid4.png}
+    \caption{Various reference grid splittings}
+  \end{subfigure}
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=\textwidth]{figures/coeff_ex.png}
+    \caption{Example coefficient function}
+  \end{subfigure}
+  \end{figure}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Convolutional Network}
+  \frametitle{Multigrid, CNN}
   \begin{itemize}
   \item Take the C/F splittings, run in multigrid solver to find convergence rate and relaxation weight that maximizes the former.
+    \begin{itemize}
+    \item Two level V-cycle solver, run for 50 iterations or until error sufficiently small.
+    \item Two rounds Jacobi pre- and post-relaxation
+    \item Ideal 1D AMG interpolation operator: $\mat{P} = \begin{bmatrix} -\mat{A}_{F\!F}^{-1}\mat{A}_{FC} \\ \mat{I} \end{bmatrix}$
+    \end{itemize}
   \item Use the data to train a \textit{1D convolutional network} that predicts convergence, Jacobi relaxation.
+    \begin{itemize}
+    \item Look at neighboring values of nodes to predict features
+    \item Stack multiple CNN layers followed by fully-connected layer to force scalar output
+    \end{itemize}
   \end{itemize}
-
-  \begin{table}[t]
-\centering
-\begin{tabular}{|l|l|l|l|}
-\hline
-Model & Dataset & Value \\
-
-\hline
-Jacobi Weight & Training & $1.8331 \times 10^{-3}$ \\
-Jacobi Weight &  Testing & $1.8396 \times 10^{-3}$ \\
-\hline
-Convergence Factor & Training & $1.4839 \times 10^{-3}$ \\
-Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
-\hline
-\end{tabular}
-\caption{Mean squared error (MSE) between predicted and true Jacobi weight, convergence factor.}
-\label{tab:poisson_loss}
-\end{table}
 \end{frame}
 
 
@@ -112,11 +124,11 @@ Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
   \centering
   \begin{subfigure}{.48\textwidth}
     \includegraphics[width=\textwidth]{figures/poisson_conv_test_pred.png}
-    \caption{Testing predictions}
+    \caption{Convergence Factor Predictions}
   \end{subfigure}
   \begin{subfigure}{.48\textwidth}
     \includegraphics[width=\textwidth]{figures/poisson_jacobi_test_pred.png}
-    \caption{Training predictions}
+    \caption{Relaxation Weight Predictions}
   \end{subfigure}
   \caption{(a) Predicted convergence values vs. true convergence values, (b) Predicted relaxation weights vs true relaxation weights.  Values closer to the diagonal represent more accurate predictions. }
   \label{fig:poisson_conv_pred}
@@ -139,7 +151,12 @@ Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
   \[\vec{w}\cdot\nabla u -k\nabla^2u = f,\]
   on 2D square, $\Omega = \left[-1,1\right]^2$, discretized as quadrilateral finite elements.  Use  $k=0.1$, $\vec{w} = \begin{bmatrix} 2y(1-x^2) & 2x(1-y^2)  \end{bmatrix}$.  Apply Dirichlet conditions as one ``hot'' wall and three ``cold'' walls.
   \begin{figure}[h]
-    \includegraphics[width=0.4\textwidth]{figures/recirculating.png}
+    \begin{subfigure}{.48\textwidth}
+      \includegraphics[width=0.9\textwidth]{figures/recirculating.png}
+    \end{subfigure}
+    \begin{subfigure}{.48\textwidth}
+      \includegraphics[width=\textwidth]{figures/wind.png}
+    \end{subfigure}
   \end{figure}
 \end{frame}
 
@@ -149,10 +166,18 @@ Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
   \begin{itemize}
   \item Discretize on a $25 \times 25$ structured grid.
   \item Start from ``reference'' splittings, all fine, all coarse, AMG output, etc.
-  \item Randomly perturb each reference in several trials, according to \[ p = \left\{ 0.01 \quad 0.05 \quad 0.1 \quad 0.25 \quad 0.5 \quad 0.75 \right\}. \]
+  \item Randomly perturb again in various trials.
   \item Don't generate coefficient values for now.
   \item Take output and run through 50 iteration multigrid solver to find convergence rate.
   \end{itemize}
+  \begin{figure}[h]
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=0.8\textwidth]{figures/amgsplit.png}
+  \end{subfigure}
+  \begin{subfigure}{.48\textwidth}
+    \includegraphics[width=0.8\textwidth]{figures/lin_split.png}
+  \end{subfigure}
+  \end{figure}
 \end{frame}
 
 
@@ -185,22 +210,19 @@ Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
   \item Classical convolution techniques work okay on structured, grid-like inputs.
   \item Very restrictive in terms of mesh data we can use for FEM solvers.
   \item Take a look at some network architectures that allow for unstructured data: introduce \textit{graph-nets}.
+    \begin{itemize}
+      \item Get FEM matrix, convert to graph and try to learn properties about the system.
+    \end{itemize}
   \end{itemize}
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Graphnets Motivation}
-  Take FEM matrix, convert to graph and try to learn properties about the system.
-  \begin{figure}[h]
-  \begin{subfigure}{.40\textwidth}
+    \begin{figure}[h]
+  \begin{subfigure}{.4\textwidth}
     \includegraphics[width=\textwidth]{figures/sparse.png}
   \end{subfigure}
   \begin{subfigure}{.08\textwidth}
     \[ \Longrightarrow \]
   \end{subfigure}
   \begin{subfigure}{.40\textwidth}
-    \includegraphics[width=0.7\textwidth]{figures/graph.png}
+    \includegraphics[width=0.6\textwidth]{figures/graph.png}
   \end{subfigure}
 \end{figure}
 \end{frame}
@@ -210,33 +232,38 @@ Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
   \frametitle{Message-Passing Graph Convolutions}
   \begin{itemize}
   \item Many graph convolution implementations, one such is the \textit{Message-Passing Graph} layer.
-  \item Nodes learn optimal ``messages'' to pass via edges.  Each node passes this message to other nodes in its neighborhood.
-  \item Update given by:
-  \begin{equation*}\label{eqn:mpnn_prop}
-    \left(\mat{H}^{(i)}\right)_j = \frac{1}{\abs{\mathcal{N}\left(j\right)}} \sum_{k\in\mathcal{N}\left(j\right)} F^{(i)}\left(e_{j,k}\right)\left(\mat{H}^{(i-1)}\right)_k + \vec{b}^{(i)}
-  \end{equation*}
+  \item In each layer, nodes learn optimal ``messages'' to pass via edges.  Each node passes this message to other nodes in its neighborhood.
+  %% \item Update given by:
+  %% \begin{equation*}\label{eqn:mpnn_prop}
+  %%   \left(\mat{H}^{(i)}\right)_j = \frac{1}{\abs{\mathcal{N}\left(j\right)}} \sum_{k\in\mathcal{N}\left(j\right)} F^{(i)}\left(e_{j,k}\right)\left(\mat{H}^{(i-1)}\right)_k + \vec{b}^{(i)}
+  %% \end{equation*}
   \item Stacking multiple of these layers approximates traditional grid-based convolution.
+  \item Run each set of nodal values through linear NN, take average for final convergence rate.
   \end{itemize}
+   \begin{figure}[h]
+    \includegraphics[width=0.5\textwidth]{figures/graphnet.png}
+    \caption{Example graphnet architecture}
+\end{figure}
 \end{frame}
 
 
-\begin{frame}
-  \frametitle{Message-Passing Architecture}
-  \begin{itemize}
-  \item Pass node C/F values, $\mat{X}$, through 4 MPN layers to get $\mat{H}^{(i)}, \enskip i\in\left\{1,2,3,4\right\}$.
-  \item Stack historical values to both simulate residual-style networks and give more information to aggregator:
-    \[ \mat{R} =
-\begin{bmatrix}
-\hdots & \mat{X}^T & \hdots \\
-\hdots & \left(\mat{H}^{(1)}\right)^T & \hdots \\
-\hdots & \left(\mat{H}^{(2)}\right)^T & \hdots \\
-\hdots & \left(\mat{H}^{(3)}\right)^T & \hdots \\
-\hdots & \left(\mat{H}^{(4)}\right)^T & \hdots \\
-\end{bmatrix} \]
-\item Run each set of nodal values through linear NN, take average for final convergence rate:
-  \[ y=\frac{1}{N} \sum_j \sigma\left( \left( \vec{r}_j \mat{W}^{(5)} + \vec{b}^{(5)} \right)\mat{W}^{(6)} + \vec{b}^{(6)} \right) \]
-  \end{itemize}
-\end{frame}
+%% \begin{frame}
+%%   \frametitle{Message-Passing Architecture}
+%%   \begin{itemize}
+%%   \item Pass node C/F values, $\mat{X}$, through 4 MPN layers to get $\mat{H}^{(i)}, \enskip i\in\left\{1,2,3,4\right\}$.
+%%   \item Stack historical values to both simulate residual-style networks and give more information to aggregator:
+%%     \[ \mat{R} =
+%% \begin{bmatrix}
+%% \hdots & \mat{X}^T & \hdots \\
+%% \hdots & \left(\mat{H}^{(1)}\right)^T & \hdots \\
+%% \hdots & \left(\mat{H}^{(2)}\right)^T & \hdots \\
+%% \hdots & \left(\mat{H}^{(3)}\right)^T & \hdots \\
+%% \hdots & \left(\mat{H}^{(4)}\right)^T & \hdots \\
+%% \end{bmatrix} \]
+%% \item Run each set of nodal values through linear NN, take average for final convergence rate:
+%%   \[ y=\frac{1}{N} \sum_j \sigma\left( \left( \vec{r}_j \mat{W}^{(5)} + \vec{b}^{(5)} \right)\mat{W}^{(6)} + \vec{b}^{(6)} \right) \]
+%%   \end{itemize}
+%% \end{frame}
 
 
 \begin{frame}
@@ -275,6 +302,14 @@ Convergence Factor & Testing & $1.5171 \times 10^{-3}$ \\
 %%   this seems short-ish so far
 %% \end{frame}
 
+\begin{frame}
+  \frametitle{Conclusions}
+  \begin{itemize}
+  \item These AMG features are indeed learnable with supervised methods.
+  \item Predicting these values becomes more difficult on more complex problems, domains.
+  \item What else can we learn?
+  \end{itemize}
+\end{frame}
 
 \begin{frame}
   \frametitle{Future Directions}
