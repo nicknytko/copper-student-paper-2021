@@ -9,10 +9,10 @@
 \usepackage{amsmath}
 \usepackage{bbm}
 \usepackage{harpoon}
-\usepackage{caption}
-\usepackage{subcaption}
 \usepackage[square,numbers]{natbib}
 \usepackage{soul}
+\usepackage{caption}
+\usepackage{subcaption}
 \setcitestyle{numbers}
 \usefonttheme[onlymath]{serif}
 
@@ -53,8 +53,8 @@
   \frametitle{Poisson Problem}
   \begin{itemize}
   \item Look at the 1D variable coefficients case w/ homogeneous Dirichlet conditions
-    \[ -\nabla \cdot \left(k\left(\vec{x}\right) \nabla \vec{y} \right) = f \]
-    \[ \Omega = \left[-1, 1\right] \quad \partial\Omega = 0 \]
+    \[ -\nabla \cdot \left(k\left(\vec{x}\right) \nabla \vec{u} \right) = f \]
+    \[ \Omega = \left[-1, 1\right] \quad \vec{u}\left(\partial\Omega\right) = 0 \]
   \item Discretized on $N=31$ internal points using finite differences, $k\left(\vec{x}\right)$ is discretized on midpoints to preserve symmetry.
   \item For arbitrary C/F splitting, can we predict convergence rate and optimal relaxation weight?
   \end{itemize}
@@ -79,9 +79,9 @@
 \begin{frame}
   \frametitle{Dataset Generation}
   \begin{itemize}
-  \item Start from ``reference'' splittings, which are evenly spaced coarse points on a grid.
-  \item Randomly perturb each reference in several trials, each point has a set probability of being flipped to opposite value (i.e., coarse to fine and fine to coarse).
-  \item Generate variable coefficients according to a few random functions, i.e. cosine wave, random polynomial, noise.
+  \item Start from ``reference'' splittings -- evenly spaced coarse points on grid
+  \item Randomly perturb each reference in several trials, each point has a set probability of being flipped to opposite value
+  \item Generate variable coefficients with a few random functions, i.e. cosine wave, random polynomial, noise
   \end{itemize}
   \begin{figure}[h]
   \centering
@@ -90,11 +90,9 @@
     \includegraphics[width=\textwidth]{figures/grid2.png}
     \includegraphics[width=\textwidth]{figures/grid3.png}
     \includegraphics[width=\textwidth]{figures/grid4.png}
-    \caption{Various reference grid splittings}
   \end{subfigure}
   \begin{subfigure}{.48\textwidth}
     \includegraphics[width=\textwidth]{figures/coeff_ex.png}
-    \caption{Example coefficient function}
   \end{subfigure}
   \end{figure}
 \end{frame}
@@ -103,9 +101,9 @@
 \begin{frame}
   \frametitle{Multigrid, CNN}
   \begin{itemize}
-  \item Take the C/F splittings, run in multigrid solver to find convergence rate and relaxation weight that maximizes the former.
+  \item Take the C/F splittings, run in multigrid solver to find convergence rate and relaxation weight that maximizes the former
     \begin{itemize}
-    \item Two level V-cycle solver, run for 50 iterations or until error sufficiently small.
+    \item Two level V-cycle solver, run for 50 iterations or until error sufficiently small
     \item Two rounds Jacobi pre- and post-relaxation
     \item Ideal 1D AMG interpolation operator: $\mat{P} = \begin{bmatrix} -\mat{A}_{F\!F}^{-1}\mat{A}_{FC} \\ \mat{I} \end{bmatrix}$
     \end{itemize}
@@ -123,14 +121,11 @@
   \begin{figure}[h]
   \centering
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/poisson_conv_test_pred.png}
-    \caption{Convergence Factor Predictions}
+    \includegraphics[width=\textwidth]{figures/conv_cnn.pdf}
   \end{subfigure}
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/poisson_jacobi_test_pred.png}
-    \caption{Relaxation Weight Predictions}
+    \includegraphics[width=\textwidth]{figures/jacobi_cnn.pdf}
   \end{subfigure}
-  \caption{(a) Predicted convergence values vs. true convergence values, (b) Predicted relaxation weights vs true relaxation weights.  Values closer to the diagonal represent more accurate predictions. }
   \label{fig:poisson_conv_pred}
 \end{figure}
 \end{frame}
@@ -147,9 +142,14 @@
 
 \begin{frame}
   \frametitle{Convection-Diffusion Problem}
-  Try out a specific convection-diffusion problem,
-  \[\vec{w}\cdot\nabla u -k\nabla^2u = f,\]
-  on 2D square, $\Omega = \left[-1,1\right]^2$, discretized as quadrilateral finite elements.  Use  $k=0.1$, $\vec{w} = \begin{bmatrix} 2y(1-x^2) & 2x(1-y^2)  \end{bmatrix}$.  Apply Dirichlet conditions as one ``hot'' wall and three ``cold'' walls.
+  Solve specific problem,
+  \begin{align*}
+    \vec{w}\cdot\nabla \vec{u} -k\nabla^2\vec{u} &= f \\
+    \Omega &= \left[-1,1\right]^2 \\
+    k &= 0.1 \\
+    \vec{w} &= \begin{bmatrix} 2y(1-x^2) & 2x(1-y^2)  \end{bmatrix},
+  \end{align*}
+  discretized as quad finite elements.
   \begin{figure}[h]
     \begin{subfigure}{.48\textwidth}
       \includegraphics[width=0.9\textwidth]{figures/recirculating.png}
@@ -164,18 +164,18 @@
 \begin{frame}
   \frametitle{Dataset Generation, Convection-Diffusion}
   \begin{itemize}
-  \item Discretize on a $25 \times 25$ structured grid.
-  \item Start from ``reference'' splittings, all fine, all coarse, AMG output, etc.
-  \item Randomly perturb again in various trials.
-  \item Don't generate coefficient values for now.
-  \item Take output and run through 50 iteration multigrid solver to find convergence rate.
+  \item Discretize on a $25 \times 25$ structured grid
+  \item Start from ``reference'' splittings, all fine, all coarse, AMG output, etc
+  \item Randomly perturb again in various trials
+  \item Don't generate coefficient values for now
+  \item Take output and run through 50 iteration multigrid solver to find convergence rate
   \end{itemize}
   \begin{figure}[h]
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=0.8\textwidth]{figures/amgsplit.png}
+    \includegraphics[width=0.8\textwidth]{figures/amgsplit.pdf}
   \end{subfigure}
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=0.8\textwidth]{figures/lin_split.png}
+    \includegraphics[width=0.8\textwidth]{figures/lin_split.pdf}
   \end{subfigure}
   \end{figure}
 \end{frame}
@@ -184,22 +184,16 @@
 \begin{frame}
   \frametitle{Convection-Diffusion Convolution}
   \begin{itemize}
-    \item 2D structured grid $\Rightarrow$ train 2D convolutional network to predict convergence.
+    \item 2D structured grid $\Rightarrow$ train 2D convolutional network to predict convergence
   \end{itemize}
   \begin{figure}[h]
   \centering
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/poisson_conv_test_pred.png}
-    \caption{Testing predictions}
-    \label{subfig:poisson_conv_test}
+    \includegraphics[width=\textwidth]{figures/cnn_test.pdf}
   \end{subfigure}
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/poisson_conv_train_pred.png}
-    \caption{Training predictions}
-    \label{subfig:poisson_conv_train}
+    \includegraphics[width=\textwidth]{figures/cnn_train.pdf}
   \end{subfigure}
-  \caption{Predicted convergence values vs. true convergence values on (\ref{subfig:poisson_conv_test}) testing and (\ref{subfig:poisson_conv_train}) training datasets for Poisson equation. Values closer to the diagonal represent more accurate predictions. }
-  \label{fig:poisson_conv_pred}
 \end{figure}
 \end{frame}
 
@@ -207,11 +201,11 @@
 \begin{frame}
   \frametitle{CNN to GNN}
   \begin{itemize}
-  \item Classical convolution techniques work okay on structured, grid-like inputs.
-  \item Very restrictive in terms of mesh data we can use for FEM solvers.
-  \item Take a look at some network architectures that allow for unstructured data: introduce \textit{graph-nets}.
+  \item Classical convolution techniques work okay on structured, grid-like inputs
+  \item Very restrictive in terms of mesh data we can use for FEM solvers
+  \item Take a look at some network architectures that allow for unstructured data: introduce \textit{graph-nets}
     \begin{itemize}
-      \item Get FEM matrix, convert to graph and try to learn properties about the system.
+      \item Get FEM matrix, convert to graph and try to learn properties about the system
     \end{itemize}
   \end{itemize}
     \begin{figure}[h]
@@ -231,18 +225,17 @@
 \begin{frame}
   \frametitle{Message-Passing Graph Convolutions}
   \begin{itemize}
-  \item Many graph convolution implementations, one such is the \textit{Message-Passing Graph} layer.
+  \item Many graph convolution implementations, one such is the \textit{Message-Passing Graph} layer
   \item In each layer, nodes learn optimal ``messages'' to pass via edges.  Each node passes this message to other nodes in its neighborhood.
   %% \item Update given by:
   %% \begin{equation*}\label{eqn:mpnn_prop}
   %%   \left(\mat{H}^{(i)}\right)_j = \frac{1}{\abs{\mathcal{N}\left(j\right)}} \sum_{k\in\mathcal{N}\left(j\right)} F^{(i)}\left(e_{j,k}\right)\left(\mat{H}^{(i-1)}\right)_k + \vec{b}^{(i)}
   %% \end{equation*}
   \item Stacking multiple of these layers approximates traditional grid-based convolution.
-  \item Run each set of nodal values through linear NN, take average for final convergence rate.
+  \item Run each set of nodal values through small fully-connected NN, take average for final convergence rate.
   \end{itemize}
    \begin{figure}[h]
     \includegraphics[width=0.5\textwidth]{figures/graphnet.png}
-    \caption{Example graphnet architecture}
 \end{figure}
 \end{frame}
 
@@ -281,16 +274,13 @@
   \begin{figure}[h]
   \centering
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/cd_var_conv_mpnn_test_pred.png}
-    \caption{Testing predictions}
+    \includegraphics[width=\textwidth]{figures/gnn_test.pdf}
     \label{subfig:cd_mpnn_test}
   \end{subfigure}
   \begin{subfigure}{.48\textwidth}
-    \includegraphics[width=\textwidth]{figures/cd_var_conv_mpnn_train_pred.png}
-    \caption{Training predictions}
+    \includegraphics[width=\textwidth]{figures/gnn_train.pdf}
     \label{subfig:cd_mpnn_train}
   \end{subfigure}
-  \caption{Predicted convergence rates vs. true convergence rates on (\ref{subfig:cd_mpnn_test}) testing and (\ref{subfig:cd_mpnn_train}) training datasets for model convection-diffusion problem, using an Edge-Conditioned Convolution network. Values closer to the diagonal represent more accurate predictions.}
   \label{fig:cd_mpnn_pred}
 \end{figure}
 \end{frame}

@@ -1,9 +1,4 @@
 \beamer@slide {fig:poisson_conv_pred}{7}
-\beamer@slide {subfig:poisson_conv_test}{11}
-\beamer@slide {sub@subfig:poisson_conv_test}{11}
-\beamer@slide {subfig:poisson_conv_train}{11}
-\beamer@slide {sub@subfig:poisson_conv_train}{11}
-\beamer@slide {fig:poisson_conv_pred}{11}
 \beamer@slide {subfig:cd_mpnn_test}{15}
 \beamer@slide {sub@subfig:cd_mpnn_test}{15}
 \beamer@slide {subfig:cd_mpnn_train}{15}
